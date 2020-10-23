@@ -23,13 +23,13 @@ import heapq
 from typing import List
 class Solution:
   def min_five_state_reviews(self, product_ratings: List[List[int]], ratings_threshold: int) -> int:
-    pq = [(-self.diff(rating), rating) for rating in product_ratings]
-    heapq.heapify(pq)
-    ave_rating = sum(map((lambda x: x[0]/x[1]), product_ratings))/len(product_ratings)
-    count = 0
+    pq = [(-self.diff(rating), rating) for rating in product_ratings] # O(n)
+    heapq.heapify(pq)  # O(n)
+    ave_rating = sum(map((lambda x: x[0]/x[1]), product_ratings))/len(product_ratings) O(n)
+    count = 0 # O(c)
     while ave_rating < ratings_threshold / 100:
       count += 1
-      diff, rating = heapq.heappop(pq)
+      diff, rating = heapq.heappop(pq) # O(log(n))
       rating = [rating[0]+1, rating[1]+1]
       heapq.heappush(pq, (-self.diff(rating), rating))
       ave_rating = sum(map((lambda x: x[1][0]/x[1][1]), pq)) / len(pq)
