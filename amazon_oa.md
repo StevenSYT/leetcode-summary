@@ -4,7 +4,7 @@
   - [Transaction Logs](#transaction-logs)
   - [Utilization Checks](#utilization-checks)
 
-### Amazon Fresh Promotion 
+## Amazon Fresh Promotion 
 Amazon Fresh is running a promotion in which customers receive prizes for purchasing a secret combination of fruits. The combination will change each day, and the team running the promotion wants to use a code list to make it easy to change the combination. The code list contains groups of fruits. 
 
 Both the order of the groups within the code list and the order of the fruits within the groups matter. However, between the groups of fruits, any number, and type of fruit is allowable. The term "anything" is used to allow for any type of fruit to appear in that location within the group.
@@ -62,7 +62,7 @@ class Solution:
         return shopping_cart
 ```
 
-### Five Star Sellers
+## Five Star Sellers
 Given the number of five-star and total reviews for each product a company sells, as well as the threshold percentage, what is the minimum number of additional five-star reviews the company needs to become five star seller.
 For ex, there are 3 products (n=3) with `productRatings =[[4,4],[1,2],[3,6]]`, percentage rating `threshold = 77`.
 
@@ -121,7 +121,7 @@ class Solution:
             product_rating[0] / product_rating[1])
 ```
 
-### Transaction Logs
+## Transaction Logs
 
 Amazon parses logs of user transactions/activity to flag fraudulent activity. The log file is represented as an Array of arrays. The arrays consist of the following data:
 
@@ -167,7 +167,7 @@ class Solution:
         return sorted(target_users, reverse=True)
 ```
 
-### Utilization Checks
+## Utilization Checks
 A new Amazon-developed scaling computing system checks the average utilization of the computing system every second while it monitors. It implements an autoscale policy to add or reduce instances depending on the current load as described below. Once an action of adding or reducing the number of instances is performed, the system will stop monitoring for 10 seconds. During that time, the number of instances does not change.
 
 Average utilization < 25%: An action is instantiated to reduce the number of instances by half if the number of instances is greater than 1 (take the ceiling if the number is not an integer). If the number of instances is 1, take no action.
