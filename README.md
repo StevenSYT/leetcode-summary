@@ -1,5 +1,6 @@
 # Leetcode Summary
 
-Learning purpose only. Organizing the code a little bit.
+Learning purpose only. Record leetcode problems and OAs.
 
-To be updated.
+- [Amazon Online Assessment](./amazon_oa.md)
+
