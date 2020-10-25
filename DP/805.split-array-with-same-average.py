@@ -6,7 +6,7 @@
 
 # @lc code=start
 class Solution:
-    def splitArraySameAverage(self, A: List[int]) -> bool:
+    def splitArraySameAverageSolution1(self, A: List[int]) -> bool:
         s = sum(A)
         self.cache = {}
         for size in range(1, len(A) // 2 + 1):
@@ -27,6 +27,20 @@ class Solution:
         ])
         self.cache[(target, size, nums)] = res
         return res
+    
+
+    def splitArraySameAverage(self, A):
+        A.sort(reverse=True)
+        dp = {0:0}
+        l, s = len(A), sum(A)
+        for num in A:
+            for k in sorted(dp.keys(), reverse=True):
+                dp[k + num] = dp[k]+1
+                k += num
+                v = dp[k]
+                if v and l - v and k * (l - v) == (s - k) * v:
+                    return True
+        return False 
 
 
         
