@@ -16,33 +16,44 @@
 # productRatings contains only non negative integers.
 
 # Use a priority queue to store the product ratings, basically we always want to boost the product ratings
-# by always update the one that increase the average rating most. 
-# For the metric we can use the difference:  r[0]+1/r[1]+1 - r[0]/r[1], always apply the five start rating to the 
-# produce that would have the highest increase.  
+# by always update the one that increase the average rating most.
+# For the metric we can use the difference:  r[0]+1/r[1]+1 - r[0]/r[1], always apply the five start rating to the
+# produce that would have the highest increase.
+#
 import heapq
 from typing import List
+
+
 class Solution:
-  def min_five_state_reviews(self, product_ratings: List[List[int]], ratings_threshold: int) -> int:
-    pq = [(-self.diff(rating), rating) for rating in product_ratings] # O(n)
-    heapq.heapify(pq)  # O(n)
-    ave_rating = sum(map((lambda x: x[0]/x[1]), product_ratings))/len(product_ratings) O(n)
-    count = 0 # O(c)
-    while ave_rating < ratings_threshold / 100:
-      count += 1
-      diff, rating = heapq.heappop(pq) # O(log(n))
-      rating = [rating[0]+1, rating[1]+1]
-      heapq.heappush(pq, (-self.diff(rating), rating))
-      ave_rating = sum(map((lambda x: x[1][0]/x[1][1]), pq)) / len(pq)
-    return count
+    def min_five_state_reviews(self, product_ratings: List[List[int]],
+                               ratings_threshold: int) -> int:
+        pq = [(-self.diff(rating), rating)
+              for rating in product_ratings]  # O(n)
+        heapq.heapify(pq)  # O(n)
+        ave_rating = sum(map((lambda x: x[0] / x[1]), product_ratings)) / len(
+            product_ratings)  #O(n)
+        count = 0  # O(c)
+        while ave_rating < ratings_threshold / 100:
+            count += 1
+            diff, rating = heapq.heappop(pq)  # O(log(n))
+            rating = [rating[0] + 1, rating[1] + 1]
+            heapq.heappush(pq, (-self.diff(rating), rating))
+            ave_rating = sum(map((lambda x: x[1][0] / x[1][1]), pq)) / len(pq)
+        return count
 
-  def diff(self, product_rating):
-    return (product_rating[0] + 1) / (product_rating[1] + 1) - (product_rating[0] / product_rating[1]) 
+    def diff(self, product_rating):
+        return (product_rating[0] + 1) / (product_rating[1] + 1) - (
+            product_rating[0] / product_rating[1])
 
 
-product_ratings = [[[4,4,],[1,2], [3,6]]]
+product_ratings = [[[
+    4,
+    4,
+], [1, 2], [3, 6]]]
 ratings_thresholds = [77]
 output = [3]
 
 s = Solution()
 for i in range(len(product_ratings)):
-  assert s.min_five_state_reviews(product_ratings[i], ratings_thresholds[i]) == output[i]
+    assert s.min_five_state_reviews(product_ratings[i],
+                                    ratings_thresholds[i]) == output[i]

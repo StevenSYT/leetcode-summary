@@ -20,9 +20,9 @@
 class Solution:
     def win_prize(self, code_list, shopping_cart):
         for code in code_list:
-            print("shopping_cart: {}".format(shopping_cart))  
+            print("shopping_cart: {}".format(shopping_cart))
             next_shopping_cart = self.match_in_cart(code, shopping_cart)
-            
+
             if (len(next_shopping_cart) == len(shopping_cart)): return 0
             shopping_cart = next_shopping_cart
         return 1
