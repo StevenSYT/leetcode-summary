@@ -6,6 +6,8 @@
 - [Utilization Checks](#utilization-checks)
 - [Items in Containers](#items-in-containers)
 - [Turnstile](#turnstile)
+- [Substrings of Size K with K-1 Distinct Chars](#substrings-of-size-k-with-k-1-distinct-chars)
+- [Most Common Word](#most-common-word)
 
 ## Amazon Fresh Promotion
 
@@ -373,7 +375,7 @@ Return a list of integers where the value at index i is the time when the ith cu
 
 Use two queues to store the customers entering and exiting. Use flag priority to store the current prioritized customers.
 
-```
+```python
 from collections import deque
 
 
@@ -412,4 +414,96 @@ class Solution:
                     priority = 1
             t += 1
         return res
+```
+
+## Substrings of Size K with K-1 Distinct Chars
+
+As part of Day 1 challenge, your manager has created a word game for you and your teammates to play.
+
+The word game begins with your manager writing a string, and a number K on the board.
+
+You and your teammates must find a substring of size K such that there is exactly one character that is repeated once.
+
+In other words, there should be K - 1 distinct characters in the substring.
+
+Write an algorithm to help your teammates find the correct answer. If no such substring can be found, return an empty list;
+
+If multiple such substrings exist, return all of them, without repetitions. The order in which the substrings are returned does not matter.
+
+**Input**
+
+It has two arguments:
+
+`inputString`: representing the string written by the manager.
+
+`num`: an integer representing the number K, written by the manager on the board.
+
+**Output**
+
+Return a list of all substrings of inputString with K characters, that have K - 1 distinct character, i.e. exactly one character is repeated,
+or an empty list if no such substring exists in inputString. The order in which the substrings are returned does not matter.
+
+**Constraints**
+
+The input integer can only be greater than or equal to 0 and less than or equal to 26 (0 <= num <= 26).
+The input string consists of only lowercase alphabetic characters.
+
+***Solution***
+```python
+class Solution:
+    def substr_of_size_k(self, input_string, num):
+        left, right = 0, num
+        if num >= len(input_string):
+            return []
+
+        res = []
+        while right <= len(input_string):
+            if (len(set(input_string[left:right])) == num - 1):
+                res.append(input_string[left:right])
+            left += 1
+            right += 1
+        return res
+```
+
+
+
+## Most Common Word
+
+[Leetcode No.819](https://leetcode.com/problems/most-common-word/)
+
+**_Solution_**
+The idea is to extract all the words from the paragraph in lower case,
+and use a dictionary to store the <word, count> pair, use a tuple (word, count) to store the most common word so far. Can solve this problem in one pass.
+
+```python
+class Solution:
+    def mostCommonWord(self, paragraph: str, banned: List[str]) -> str:
+        def tokenize(paragraph):
+            words = []
+            word = ""
+            for i in range(len(paragraph)):
+                if paragraph[i] in " !?',;.":
+                    if word:
+                        words.append(word)
+                        word = ""
+                else:
+                    word += paragraph[i]
+            if word:
+                words.append(word)
+            return words
+
+        words = tokenize(paragraph.lower())
+        word_map = {}
+        common_word = ("", 0)
+        for word in words:
+            if word in banned: continue
+            word_map[word] = word_map.get(word, 0) + 1
+            if (word_map[word] > common_word[1]):
+                common_word = (word, word_map[word])
+        return common_word[0]
+```
+Also worth mentioning that, we don't actually need to implement a tokenize function, python actually has a regular expression lib that can match all the words with ease:
+```python
+import re
+words = re.findall(r"\w+", paragraph)
 ```
