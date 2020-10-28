@@ -8,6 +8,7 @@
 - [Turnstile](#turnstile)
 - [Substrings of Size K with K-1 Distinct Chars](#substrings-of-size-k-with-k-1-distinct-chars)
 - [Most Common Word](#most-common-word)
+- [Shopping Patterns](#shopping-patterns)
 
 ## Amazon Fresh Promotion
 
@@ -448,7 +449,8 @@ or an empty list if no such substring exists in inputString. The order in which 
 The input integer can only be greater than or equal to 0 and less than or equal to 26 (0 <= num <= 26).
 The input string consists of only lowercase alphabetic characters.
 
-***Solution***
+**_Solution_**
+
 ```python
 class Solution:
     def substr_of_size_k(self, input_string, num):
@@ -464,8 +466,6 @@ class Solution:
             right += 1
         return res
 ```
-
-
 
 ## Most Common Word
 
@@ -502,8 +502,135 @@ class Solution:
                 common_word = (word, word_map[word])
         return common_word[0]
 ```
+
 Also worth mentioning that, we don't actually need to implement a tokenize function, python actually has a regular expression lib that can match all the words with ease:
+
 ```python
 import re
 words = re.findall(r"\w+", paragraph)
+```
+
+## Shopping Patterns
+
+Amazon is trying to understand customer shopping patterns and offer items that are regularly bought together to new customers. Each item that has been bought together can be represented as an undirected graph where edges join often bundled products. A group of n products is uniquely numbered from 1 of product_nodes. A trio is defined as a group of three related products that all connected by an edge. Trios are scored by counting the number of related products outside of the trio, this is referred as a product sum.
+
+Given product relation data, determine the minimum product sum for all trios of related products in the group. If no such trio exists, return -1.
+
+**Example**
+
+```
+products_nodes = 6
+products_edges = 6
+products_from = [1,2,2,3,4,5]
+products_to = [2,4,5,5,5,6]
+```
+
+| Product | Related Products |
+| :-----: | :--------------: |
+|    1    |        2         |
+|    2    |     1, 4, 5      |
+|    3    |        5         |
+|    4    |       2, 5       |
+|    5    |    2, 3, 4, 6    |
+|    6    |        5         |
+
+<img src="aoa-trio.png" alt="trio-example" width="300"/>
+
+A graph of n = 6 products where the only trio of related products is (2, 4, 5).
+
+The product scores based on the graph above are:
+| Product | Outside Products | Which Products Are Outside |
+|:-------:|:----------------:|:--------------------------:|
+| 2 | 1 | 1 |
+| 4 | 0 | N/A |
+| 5 | 2 | 3, 6 |
+
+In the diagram above, the total product score is 1 + 0 + 2 = 3 for the trio (2, 4, 5).
+
+**Function Description**
+
+Complete the function `getMinScore` in the editor below.
+
+`getMinScore` has the following parameter(s):
+
+int `products_nodes`: the total number of products
+
+int `products_edges` the total number of edges representing related products
+
+int `products_from[products_nodes]`: each element is a node of one side of an edge.
+
+int `products_to[products edges]`: each `products_to[i]` is a node connected to `products_from[i]`
+
+Returns:
+
+int: the minimum product sum for all trios of related products in the group. If no such trio exists, return -1.
+
+**Constraints**
+
+```
+1 <= products_nodes <= 500
+1 <= products_edges <= min(500, (products_nodes * (products_nodes - 1)) / 2)
+1 <= products_from[i], products to[i] <= products_nodes
+products_from[i] != products_to[i]
+```
+
+**_Solution_**
+
+The idea is to build a graph with edges and degrees computed. The score of a 
+trio equals to the sum of the degrees - 6. To decide whether there is a trio, 
+just iterate through each edge (u, v) and see if we can find a third node w that (u, w) and (v, w) exist in the graph. 
+
+This solution is O(|V| * |E|)
+
+```python
+from collections import defaultdict
+
+
+class Graph:
+    def __init__(self, num_nodes, num_edges):
+        self.nodes = list(range(1, num_nodes))
+        self.num_edges = num_edges
+        self.edges = defaultdict(set)
+        self.degrees = defaultdict(int)
+
+    def add_edge(self, n1, n2):
+        self.edges[n1].add(n2)
+        self.edges[n2].add(n1)
+        self.degrees[n1] += 1
+        self.degrees[n2] += 1
+
+    def get_degree(self, n):
+        return self.degrees[n]
+
+    def edge_exist(self, n1, n2):
+        return n2 in self.edges[n1]
+
+
+class Solution:
+    def get_min_score(self, products_nodes, products_edges, products_from,
+                      products_to):
+        g = Graph(products_nodes, products_edges)
+
+        for i in range(len(products_from)):
+            g.add_edge(products_from[i], products_to[i])
+
+        min_score = float('inf')
+        visited_trios = set()
+        for start_node, end_nodes in g.edges.items():
+            for end_node in end_nodes:
+                # For each edge, find a third node check if trio
+                for node in g.nodes:
+                    if node == end_node or node == start_node or tuple(
+                            sorted([start_node, end_node, node
+                                    ])) in visited_trios:
+                        continue
+                    if g.edge_exist(start_node, node) and g.edge_exist(
+                            end_node, node):
+                        # Got a trio
+                        min_score = min(
+                            g.get_degree(start_node) + g.get_degree(end_node) +
+                            g.get_degree(node) - 6, min_score)
+                        visited_trios.add(
+                            tuple(sorted([start_node, end_node, node])))
+        return min_score if min_score != float('inf') else -1
 ```
