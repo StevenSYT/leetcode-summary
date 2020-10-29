@@ -9,6 +9,7 @@
 - [Substrings of Size K with K-1 Distinct Chars](#substrings-of-size-k-with-k-1-distinct-chars)
 - [Most Common Word](#most-common-word)
 - [Shopping Patterns](#shopping-patterns)
+- [Amazon Music Pairs](#amazon-music-pairs)
 
 ## Amazon Fresh Promotion
 
@@ -576,11 +577,11 @@ products_from[i] != products_to[i]
 
 **_Solution_**
 
-The idea is to build a graph with edges and degrees computed. The score of a 
-trio equals to the sum of the degrees - 6. To decide whether there is a trio, 
-just iterate through each edge (u, v) and see if we can find a third node w that (u, w) and (v, w) exist in the graph. 
+The idea is to build a graph with edges and degrees computed. The score of a
+trio equals to the sum of the degrees - 6. To decide whether there is a trio,
+just iterate through each edge (u, v) and see if we can find a third node w that (u, w) and (v, w) exist in the graph.
 
-This solution is O(|V| * |E|)
+This solution is O(|V| \* |E|)
 
 ```python
 from collections import defaultdict
@@ -633,4 +634,26 @@ class Solution:
                         visited_trios.add(
                             tuple(sorted([start_node, end_node, node])))
         return min_score if min_score != float('inf') else -1
+```
+
+## Amazon Music Pairs
+
+[Leetcode No.1010](https://leetcode.com/problems/pairs-of-songs-with-total-durations-divisible-by-60/)
+
+**_Solution_**
+
+We can use a map to store the count of the songs for each length % 60. Basically a pair of <length % 60, count>. We only care about the remainder of the length after mod 60. While we iterate through the songs, we:
+
+1. Check if there is such key in the map, the sum of that key and current song length % 60 is divisible by 60, if yes, increment the result by the value of that key (count of the qualified songs).
+
+```python
+class Solution:
+    def numPairsDivisibleBy60(self, time: List[int]) -> int:
+        songs = {}
+        res = 0
+        for idx, song in enumerate(time):
+            if (60 - song % 60) % 60 in songs:
+                res += songs[(60 - song % 60) % 60]
+            songs[song % 60] = songs.get(song % 60, 0) + 1
+        return res
 ```
