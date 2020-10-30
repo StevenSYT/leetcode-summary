@@ -541,11 +541,12 @@ products_to = [2,4,5,5,5,6]
 A graph of n = 6 products where the only trio of related products is (2, 4, 5).
 
 The product scores based on the graph above are:
+
 | Product | Outside Products | Which Products Are Outside |
 |:-------:|:----------------:|:--------------------------:|
-| 2 | 1 | 1 |
-| 4 | 0 | N/A |
-| 5 | 2 | 3, 6 |
+|    2    |        1         |              1             |
+|    4    |        0         |             N/A            |
+|    5    |        2         |            3, 6            |
 
 In the diagram above, the total product score is 1 + 0 + 2 = 3 for the trio (2, 4, 5).
 
