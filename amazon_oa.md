@@ -583,7 +583,7 @@ The idea is to build a graph with edges and degrees computed. The score of a
 trio equals to the sum of the degrees - 6. To decide whether there is a trio,
 just iterate through each edge (u, v) and see if we can find a third node w that (u, w) and (v, w) exist in the graph.
 
-This solution is O(|V| \* |E|)
+This solution is O(\|V\| \* \|E\|)
 
 ```python
 from collections import defaultdict
