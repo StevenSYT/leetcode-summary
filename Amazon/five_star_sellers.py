@@ -45,10 +45,7 @@ class Solution:
         return (rating[0] + 1) / (rating[1] + 1) - (rating[0] / rating[1])
 
 
-product_ratings = [[[
-    4,
-    4,
-], [1, 2], [3, 6]]]
+product_ratings = [[[4, 4], [1, 2], [3, 6]]]
 ratings_thresholds = [77]
 output = [3]
 
