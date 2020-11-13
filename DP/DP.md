@@ -3,6 +3,8 @@
 - [状态压缩 DP](#状态压缩-DP)
   - [Stickers To Spell Word](#stickers-to-spell-word)
   - [Smallest Sufficient Team](#smallest-sufficient-team)
+  - [Find the Shortest Superstring](#find-the-shortest-superstring)
+  - [Maximum Students Taking Exam](#maximum-students-taking-exam)
 
 ## 状态压缩 DP
 
@@ -187,4 +189,165 @@ class Solution1:
                         dp[next_status]) > len(dp[status]) + 1:
                     dp[next_status] = team + [idx]
         return dp[(1 << n) - 1]
+```
+
+### Find the Shortest Superstring
+
+[943. Find the Shortest Superstring](https://leetcode.com/problems/find-the-shortest-superstring/)
+
+**_Solution_**
+
+这是一道旅行商问题TSP(Traveling Salesman Problem)。对于两个string S1, S2, S1 -> S2的距离指的是从S1加多少个char，这个结果的string就包含S2了。
+
+假设有string A='abc', B='bcd', C='cde', 那么 A -> B = 1 因为A再加一个char 'd'就能包含B了。
+
+同理有： B -> C = 1, A -> C = 2, B -> A = 3, C -> A = 3, C -> B = 3.
+
+dp[status][last]： 当前状态为status并且最后一个访问的city是last，存的值为当前的最优super string。
+
+状态转移：dp[status][last] = dp[status - last] + dis[sec_last][last] 选一个sec_last使行走的distance最小
+
+```python
+class Solution:
+    def shortestSuperstring(self, A: List[str]) -> str:
+        N = len(A)
+        M = (1 << N)
+
+        def distance(a, b):
+            for i in range(min(len(a), len(b)), 0, -1):
+                if a[-i:] == b[:i]:
+                    return len(b) - i
+            return len(b)
+
+        def combine(a, b):
+            for i in range(min(len(a), len(b)), 0, -1):
+                if a[-i:] == b[:i]:
+                    return a + b[i:]
+            return a + b
+
+        # 这是一道旅行商问题TSP(Traveling Salesman Problem)。
+        # 对于两个string S1, S2, S1 -> S2的距离指的是从S1加多少个char，这个结果的string就包含S2了。
+        # 假设有string A='abc', B='bcd', C='cde', 那么 A -> B = 1 因为A再加一个char 'd'就能包含B了，
+        # 同理有： B -> C = 1, A -> C = 2, B -> A = 3, C -> A = 3, C -> B = 3.
+        # dp[status][last]： 当前状态为status并且最后一个访问的city是last，存的值为当前的最优super string
+        dp = [[float('inf')] * N for _ in range(M)]
+        parent = [[-1] * N for _ in range(M)]
+        dis = [[0] * N for _ in range(N)]
+
+        # Get distances
+        for i in range(N):
+            for j in range(N):
+                if i != j:
+                    dis[i][j] = distance(A[i], A[j])
+        # Base cases: if start with string i, the super string is i itself.
+        for i in range(N):
+            dp[1 << i][i] = len(A[i])
+
+        # 状态转移：dp[status][last] = dp[status - last] + dis[sec_last][last] 选一个sec_last使行走的distance最小
+        for status in range(M):
+            for last in range(N):
+                if (status & (1 << last)) == 0: continue
+                prev_status = status ^ (1 << last)
+                if prev_status == 0: continue
+                for sec_last in range(N):
+                    if (prev_status & (1 << sec_last)) == 0: continue
+                    # Choose from the second last node to go from.
+                    if dp[status][last] > dp[prev_status][sec_last] + dis[
+                            sec_last][last]:
+
+                        dp[status][last] = dp[prev_status][sec_last] + dis[
+                            sec_last][last]
+                        parent[status][last] = sec_last
+        start = min(enumerate(dp[M - 1]), key=lambda x: x[1])[0]
+        path = deque([start])
+
+        status = M - 1
+        while parent[status][start] != -1:
+            prev = parent[status][start]
+            path.appendleft(prev)
+            status -= (1 << start)
+            start = prev
+        res = A[start]
+        for i in range(1, len(path)):
+            res = combine(res, A[path[i]])
+        return res
+```
+
+### Maximum Students Taking Exam
+
+[1349. Maximum Students Taking Exam](https://leetcode.com/problems/maximum-students-taking-exam/)
+
+**_Solution_**
+
+这道题核心思想是用一个二维 dp 矩阵表示状态：`dp[i][s]`表示前 i 行的座位下，第 i 行座位选 s 的坐法，能坐下的最多的学生数。这里 s 用一个二进制数表示，比如 5 人一行，10100，1 表示这个位置有人坐，0 表示不坐。
+这样就容易推出来 dp 的转移方程为：
+
+```
+dp[i][s] = max(dp[i-1][k] for k in [valid states at row i-1])
+```
+
+关于判断 valid 与否，有几个要考虑的因素：
+
+1. 每个学生左右不能再挨着另一个学生，判断方法：将 state 右移一位，如果移动后与原 state 做与运算不能得到 0，说明有相邻位为 1，则是不 valid 的情况。(11000 & 01100 = 01000 != 0)
+
+2. 每个学生左前或右前不能坐人，判断方法，需要判断前后两个状态 s1 和 s2，需要满足(s1>>1)&s2 和 (s2>>1)&s1 都为 0 才是 valid 的情况。
+
+3. 当前状态必须满足坐的学生都坐在能坐的座位上，如果有学生坐在椅子是坏的座位上也不能满足。要判断这个需要先把 input 里的 seats 做一个 bit 的加工，也转化成二进制表示，可以用 1 表示坏的椅子，0 表示好的椅子，那么如果 state&seatsMask 不为 0 的话，表示有学生坐在坏的椅子上了，比如椅子：01100，坐法：00100，01100 & 10100 = 00100 这个“1”就是坐在坏椅子上的学生。
+
+```python
+class Solution:
+    def maxStudents(self, seats: List[List[str]]) -> int:
+        M = len(seats)
+        N = len(seats[0])
+
+        dp = [0] * (1 << N)
+
+        def count(cur_state):
+            res = 0
+            while cur_state:
+                res += (cur_state & 1)
+                cur_state = (cur_state >> 1)
+            return res
+
+        # if 11010 indicates broken seats for "1"s,
+        # if any state 01000 & 11010 != 0, that means this
+        # state conflicts with the seats.
+        seatMasks = [0] * (M + 1)
+        for i in range(1, M + 1):
+            mask = 0
+            for j in range(N):
+                if seats[i - 1][j] == '#':
+                    mask += (1 << (N - j - 1))
+                seatMasks[i] = mask
+        for row in range(1, M + 1):
+            dp_prev = dp
+            dp = [0] * (1 << N)
+            for cur_state in range(1 << N):
+                # e.g. 1110 & 0111 = 0110 which is not valid state.
+                if (cur_state & (cur_state >> 1) != 0 or
+                    (seatMasks[row] & cur_state)) != 0:
+                    continue
+
+                # Trying to get the dp[cur_state] value
+                for prev_state in range(1 << N):
+                    # choose a valid prev_state
+                    if (prev_state &
+                        (prev_state >> 1)) != 0 or (seatMasks[row - 1]
+                                                    & prev_state) != 0:
+                        continue
+
+                    # e.g. prev_state: 01010
+                    #      cur_state:  00100
+                    # prev_state&(cur_state>>1) => 01010 & 00010 != 0
+                    # cur_state&(prev_state>>1) => 00100 & 00101 != 0
+                    # conflict, continue
+                    if (prev_state &
+                        (cur_state >> 1)) != 0 or (cur_state &
+                                                   (prev_state >> 1)) != 0:
+                        continue
+
+                    dp[cur_state] = max(dp_prev[prev_state] + count(cur_state),
+                                        dp[cur_state])
+
+        return max(dp)
 ```
