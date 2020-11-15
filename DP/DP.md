@@ -6,6 +6,7 @@
   - [Find the Shortest Superstring](#find-the-shortest-superstring)
   - [Maximum Students Taking Exam](#maximum-students-taking-exam)
   - [Parallel Courses II](#parallel-courses-ii)
+  - [Number of Ways to Wear Different Hats to Each Other](#number-of-ways-to-wear-different-hats-to-each-other)
 
 ## 状态压缩 DP
 
@@ -428,4 +429,47 @@ class Solution:
                                                   dp[cur_state] + 1)
                     sub = ((sub - 1) & can_study)  # 从can_study遍历一遍所有的子集，这个操作可以记住
         return dp[N - 1]
+```
+
+### Number of Ways to Wear Different Hats to Each Other
+
+[1434. Number of Ways to Wear Different Hats to Each Other](https://leetcode.com/problems/number-of-ways-to-wear-different-hats-to-each-other/)
+
+**_Solution_**
+
+**Assign hats to people, don't assign people with hats.**
+
+这道题给的条件很特殊，1 <= n <= 10, number of hats = 40.
+
+这样的话我们知道如果 mask 表示成用了哪些帽子的话，这个数量级就比用 mask 表示哪些人带了帽子。这里要做一个新的映射：hat_to_people，记录的就是每个帽子有哪些人可以戴。
+
+这道题用二维 dp 好理解一些：dp[i][mask]表示如果只用前 i 个帽子，在 mask 这种状态的时候有多少种戴法。这样就 i 以次递增然后如果前 i-1 个帽子的所有情况都算完了，对于第 i 个帽子，根据 hat_to_people 看看这个帽子有哪些人可以戴上它，以及当前 mask 这个人 p 是不是已经带了帽子了。状态转移为：
+
+```
+dp[i][mask | (1 << p)] += dp[i-1][mask]
+```
+
+```python
+class Solution:
+    def numberWays(self, hats: List[List[int]]) -> int:
+        n = len(hats)
+        N = (1 << n)
+        mod = 10**9 + 7
+
+        h_to_p = [[] for _ in range(40)]
+        for p in range(n):
+            for h in hats[p]:
+                h_to_p[h - 1].append(p)
+
+        dp = [0] * N
+        dp[0] = 1
+
+        for h in range(40):
+            for state in range(N - 1, -1, -1):
+                for p in h_to_p[h]:
+                    if (state & (1 << p) == 0):
+                        dp[state | (1 << p)] = (dp[state |
+                                                   (1 << p)] + dp[state]) % mod
+        return dp[-1]
+
 ```
