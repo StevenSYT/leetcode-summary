@@ -5,6 +5,7 @@
   - [Smallest Sufficient Team](#smallest-sufficient-team)
   - [Find the Shortest Superstring](#find-the-shortest-superstring)
   - [Maximum Students Taking Exam](#maximum-students-taking-exam)
+  - [Parallel Courses II](#parallel-courses-ii)
 
 ## 状态压缩 DP
 
@@ -197,15 +198,15 @@ class Solution1:
 
 **_Solution_**
 
-这是一道旅行商问题TSP(Traveling Salesman Problem)。对于两个string S1, S2, S1 -> S2的距离指的是从S1加多少个char，这个结果的string就包含S2了。
+这是一道旅行商问题 TSP(Traveling Salesman Problem)。对于两个 string S1, S2, S1 -> S2 的距离指的是从 S1 加多少个 char，这个结果的 string 就包含 S2 了。
 
-假设有string A='abc', B='bcd', C='cde', 那么 A -> B = 1 因为A再加一个char 'd'就能包含B了。
+假设有 string A='abc', B='bcd', C='cde', 那么 A -> B = 1 因为 A 再加一个 char 'd'就能包含 B 了。
 
 同理有： B -> C = 1, A -> C = 2, B -> A = 3, C -> A = 3, C -> B = 3.
 
-dp[status][last]： 当前状态为status并且最后一个访问的city是last，存的值为当前的最优super string。
+dp[status][last]： 当前状态为 status 并且最后一个访问的 city 是 last，存的值为当前的最优 super string。
 
-状态转移：dp[status][last] = dp[status - last] + dis[sec_last][last] 选一个sec_last使行走的distance最小
+状态转移：dp[status][last] = dp[status - last] + dis[sec_last][last] 选一个 sec_last 使行走的 distance 最小
 
 ```python
 class Solution:
@@ -350,4 +351,81 @@ class Solution:
                                         dp[cur_state])
 
         return max(dp)
+```
+
+### Parallel Courses II
+
+[1494. Parallel Courses II](https://leetcode.com/problems/parallel-courses-ii/)
+
+**_Solution_**
+
+这个[解答](https://www.acwing.com/file_system/file/content/whole/index/content/1063233/)讲的很好。
+
+用一个`state`来表示所有的上课的情况，`'0000'`表示都没上，`'1111'`表示都上了。
+
+`dp[state]`表示达到这个状态 state 最少需要的学期数。
+
+状态转移的思路是从一个当前 valid 的状态，得出学生一学期能上的所有的课的组合 (total number <= k)，然后更新下一个状态。
+
+```python
+dp[cur_state | new_courses] = min(dp[cur_state | new_courses], dp[cur_state] + 1)
+```
+
+注意有几个很巧的小 trick：
+
+1. 得到一个状态 state 所有的子集:
+
+```python
+sub = state
+while sub:
+    print(sub)
+    sub = (sub - 1) & state
+```
+
+2. 判断一个课的所有 dependency，做一个辅助的 list 存每个课的 dependency 对应的掩码:
+
+```python
+deps = [0] * n
+for x, y in dependencies:
+    deps[y-1] |= (1 << (y-1))
+```
+
+代码：
+
+```python
+class Solution:
+    def minNumberOfSemesters(self, n: int, dependencies: List[List[int]],
+                             k: int) -> int:
+        # '1111' -> 所有的课上完了
+        # '0000' -> 一门都没上
+        N = 1 << n
+        dp = [float('inf')] * N
+
+        # dp[state]: 当达到state的时候，最少需要多少学期
+        dp[0] = 0
+
+        # pres[i]: 第i门课的先修课有哪些
+        pres = [0] * n
+        for dep in dependencies:
+            pres[dep[1] - 1] += (1 << (dep[0] - 1))
+
+        # 有效的状态一定是递增
+        for cur_state in range(N):
+            if dp[cur_state] == float('inf'): continue
+            can_study = 0
+            for subject in range(n):
+                if not (cur_state >> subject) & 1: continue
+                if (cur_state & pres[subject]) == pres[subject]:
+                    can_study |= (1 << subject)
+            if bin(can_study).count('1') <= k:
+                dp[can_study | cur_state] = min(dp[can_study | cur_state],
+                                                dp[cur_state] + 1)
+            else:
+                sub = can_study
+                while sub > 0:
+                    if (bin(sub).count('1') <= k):
+                        dp[sub | cur_state] = min(dp[sub | cur_state],
+                                                  dp[cur_state] + 1)
+                    sub = ((sub - 1) & can_study)  # 从can_study遍历一遍所有的子集，这个操作可以记住
+        return dp[N - 1]
 ```
