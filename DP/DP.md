@@ -8,6 +8,8 @@
   - [Parallel Courses II](#parallel-courses-ii)
   - [Number of Ways to Wear Different Hats to Each Other](#number-of-ways-to-wear-different-hats-to-each-other)
   - [Distribute Repeating Integers](#distribute-repeating-integers)
+- [最长公共子序列 LCS](#最长公共子序列-LCS)
+  - [Longest Common Subsequence](#longest-common-subsequence)
 
 ## 状态压缩 DP
 
@@ -529,4 +531,37 @@ class Solution:
                         dp[i][state | sub] = True
                     sub = (sub - 1) & to_add
         return dp[n - 1][M - 1]
+```
+
+## 最长公共子序列 LCS
+
+### Longest Common Subsequence
+
+[1143. Longest Common Subsequence](https://leetcode.com/problems/longest-common-subsequence/)
+
+**_Solution_**
+
+用一个二维 dp 来存我们需要的信息：`dp[i][j]`表示 string1 的前 i 个字符串，string2 的前 j 个字符串的 LCS。
+
+状态转移的时候就是看如果 string1[i] == string2[j], 那么 dp[i][j] = dp[i-1][j-1] + 1。就是说前 i-1，j-1 个字符串的 LCS 加上这个公共的字符串。
+
+如果 string1[i]和 string2[j]不相等，那就取 skip string1 的第 i 个字符串和 skip string2 的第 j 个字符串中 LCS 更大的。
+
+DP 写法：
+
+```python
+class Solution:
+    def longestCommonSubsequence(self, text1: str, text2: str) -> int:
+        n = len(text1)
+        m = len(text2)
+
+        dp = [[0] * (m + 1) for _ in range(n + 1)]
+
+        for i in range(1, n + 1):
+            for j in range(1, m + 1):
+                if text1[i - 1] == text2[j - 1]:
+                    dp[i][j] = dp[i - 1][j - 1] + 1
+                else:
+                    dp[i][j] = max(dp[i][j - 1], dp[i - 1][j])
+        return dp[-1][-1]
 ```
