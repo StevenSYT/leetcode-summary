@@ -10,6 +10,7 @@
   - [Distribute Repeating Integers](#distribute-repeating-integers)
 - [最长公共子序列 LCS](#最长公共子序列-LCS)
   - [Longest Common Subsequence](#longest-common-subsequence)
+  - [Interleaving String](#interleaving-string)
 
 ## 状态压缩 DP
 
@@ -563,5 +564,65 @@ class Solution:
                     dp[i][j] = dp[i - 1][j - 1] + 1
                 else:
                     dp[i][j] = max(dp[i][j - 1], dp[i - 1][j])
+        return dp[-1][-1]
+```
+
+### Interleaving String
+
+[97. Interleaving String](https://leetcode.com/problems/interleaving-string/description/)
+
+**_Solution 1_**
+
+DFS + memo
+
+```python
+class Solution:
+    def isInterleave(self, s1: str, s2: str, s3: str) -> bool:
+        def dfs(i, j, k, cache):
+            if i < 0 and j < 0 and k < 0:
+                return True
+            if (i, j, k) in cache:
+                return cache[i, j, k]
+            if i < 0:
+                cache[i, j, k] = s2[:j + 1] == s3[:k + 1]
+                return cache[i, j, k]
+            if j < 0:
+                cache[i, j, k] = s1[:i + 1] == s3[:k + 1]
+                return cache[i, j, k]
+            if s1[i] == s3[k] and dfs(i-1, j, k-1, cache):
+                cache[i, j, k] = True
+                return True
+            if s2[j] == s3[k] and dfs(i, j-1, k-1, cache):
+                cache[i, j, k] = True
+                return True
+            cache[i, j, k] = False
+            return False
+        l1, l2, l3 = len(s1), len(s2), len(s3)
+        if l1 + l2 != l3: return False
+        return dfs(l1 - 1, l2 - 1, l3 - 1, {})
+```
+
+**_Solution 2_**
+
+DP
+
+```python
+class Solution:
+    def isInterleave(self, s1: str, s2: str, s3: str) -> bool:
+        l1, l2, l3 = len(s1), len(s2), len(s3)
+        if l1 + l2 != l3: return False
+        dp = [[False] * (l2 + 1) for _ in range(l1 + 1)]
+        dp[0][0] = True
+
+        for i in range(1, l1 + 1):
+            dp[i][0] = s1[:i] == s3[:i]
+        for j in range(1, l2 + 1):
+            dp[0][j] = s2[:j] == s3[:j]
+        for i in range(1, l1 + 1):
+            for j in range(1, l2 + 1):
+                if s2[j - 1] == s3[i + j - 1] and dp[i][j - 1]:
+                    dp[i][j] = True
+                elif s1[i - 1] == s3[i + j - 1] and dp[i - 1][j]:
+                    dp[i][j] = True
         return dp[-1][-1]
 ```
