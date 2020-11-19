@@ -8,9 +8,11 @@
   - [Parallel Courses II](#parallel-courses-ii)
   - [Number of Ways to Wear Different Hats to Each Other](#number-of-ways-to-wear-different-hats-to-each-other)
   - [Distribute Repeating Integers](#distribute-repeating-integers)
-- [最长公共子序列 LCS](#最长公共子序列-LCS)
+- [LCS & 双区间](#最长公共子序列-LCS)
   - [Longest Common Subsequence](#longest-common-subsequence)
   - [Interleaving String](#interleaving-string)
+  - [Edit Distance](#edit-distance)
+
 
 ## 状态压缩 DP
 
@@ -625,4 +627,27 @@ class Solution:
                 elif s1[i - 1] == s3[i + j - 1] and dp[i - 1][j]:
                     dp[i][j] = True
         return dp[-1][-1]
+```
+
+### Edit Distance
+
+[72. Edit Distance](https://leetcode.com/problems/edit-distance/)
+
+```python
+class Solution:
+    def minDistance(self, word1: str, word2: str) -> int:
+        def dfs(i, j, cache):
+            if i < 0:
+                return j + 1
+            if j < 0:
+                return i + 1
+            if (i, j) in cache:
+                return cache[i, j]
+            if word1[i] == word2[j]:
+                cache[i, j] = dfs(i - 1, j - 1, cache)
+                return cache[i, j]
+            cache[i, j] = 1 + min(dfs(i, j - 1, cache), dfs(i - 1, j, cache),
+                                  dfs(i - 1, j - 1, cache))
+            return cache[i, j]
+        return dfs(len(word1) - 1, len(word2) - 1, {})
 ```
