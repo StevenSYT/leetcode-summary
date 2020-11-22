@@ -14,6 +14,7 @@
   - [Edit Distance](#edit-distance)
   - [Minimum ASCII Delete Sum for Two Strings](#minimum-ascii-delete-sum-for-two-strings)
   - [Delete Operation for Two Strings](#delete-operation-for-two-strings)
+  - [Max Dot Product of Two Subsequences](#max-dot-product-of-two-subsequences)
 
 ## 状态压缩 DP
 
@@ -689,4 +690,20 @@ class Solution:
             return min(dfs(i - 1, j), dfs(i, j - 1)) + 1
 
         return dfs(len(word1) - 1, len(word2) - 1)
+```
+
+### Max Dot Product of Two Subsequences
+1458. Max Dot Product of Two Subsequences(https://leetcode.com/problems/max-dot-product-of-two-subsequences/description/)
+
+```python
+class Solution:
+    def maxDotProduct(self, nums1: List[int], nums2: List[int]) -> int:
+        @functools.lru_cache(None)
+        def dfs(i, j):
+            if i < 0 or j < 0:
+                return float('-inf')
+            product = nums1[i] * nums2[j]
+            return max(product, product + dfs(i - 1, j - 1), dfs(i, j - 1),
+                       dfs(i - 1, j))
+        return dfs(len(nums1) - 1, len(nums2) - 1)
 ```
