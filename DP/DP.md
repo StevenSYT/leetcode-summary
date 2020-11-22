@@ -13,7 +13,7 @@
   - [Interleaving String](#interleaving-string)
   - [Edit Distance](#edit-distance)
   - [Minimum ASCII Delete Sum for Two Strings](#minimum-ascii-delete-sum-for-two-strings)
-
+  - [Delete Operation for Two Strings](#delete-operation-for-two-strings)
 
 ## 状态压缩 DP
 
@@ -652,7 +652,9 @@ class Solution:
             return cache[i, j]
         return dfs(len(word1) - 1, len(word2) - 1, {})
 ```
+
 ### Minimum ASCII Delete Sum for Two Strings
+
 [712. Minimum ASCII Delete Sum for Two Strings](https://leetcode.com/problems/minimum-ascii-delete-sum-for-two-strings/)
 
 ```python
@@ -668,4 +670,23 @@ class Solution:
                 return dfs(i - 1, j - 1)
             return min(ord(s1[i]) + dfs(i - 1, j), ord(s2[j]) + dfs(i, j - 1))
         return dfs(len(s1) - 1, len(s2) - 1)
+```
+
+### Delete Operation for Two Strings
+[583. Delete Operation for Two Strings](https://leetcode.com/problems/delete-operation-for-two-strings/)
+
+```python
+class Solution:
+    def minDistance(self, word1: str, word2: str) -> int:
+        @functools.lru_cache(None)
+        def dfs(i, j):
+            if i < 0:
+                return j + 1
+            if j < 0:
+                return i + 1
+            if word1[i] == word2[j]:
+                return dfs(i - 1, j - 1)
+            return min(dfs(i - 1, j), dfs(i, j - 1)) + 1
+
+        return dfs(len(word1) - 1, len(word2) - 1)
 ```
