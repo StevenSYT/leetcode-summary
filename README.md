@@ -6,4 +6,5 @@ Learning purpose only. Record leetcode problems and OAs.
 - [DP](DP/dp.md)
 - [Tree](Tree/tree.md)
 - [Two Pointers](TwoPointers/two_pointers.md)
+- [BFS](Search/BFS/bfs.md)
 
