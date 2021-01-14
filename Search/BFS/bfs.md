@@ -2,6 +2,7 @@
 
 - [Is Graph Bipartite?](#is-graph-bipartite?)
 - [Swim in Rising Water](#swim-in-rising-water)
+- [Cheapest Flights Within K Stops](#cheapest-flights-within-k-stops)
 
 ## Is Graph Bipartite?
 
@@ -99,4 +100,40 @@ class Solution:
                 if 0 <= nx < n and 0 <= ny < n and (nx, ny) not in visited:
                     heapq.heappush(q, (grid[nx][ny], nx, ny))
                     visited.add((nx, ny))
+```
+
+## Cheapest Flights Within K Stops
+
+[787. Cheapest Flights Within K Stops](https://leetcode.com/problems/cheapest-flights-within-k-stops/)
+
+**Solution**
+
+Use a priority queue to store the shortest path so far. Need to reconstruct the graph so that it is easier for later BFS.
+
+```python
+from collections import defaultdict
+import heapq
+
+
+class Solution:
+    def findCheapestPrice(self, n: int, flights: List[List[int]], src: int,
+                          dst: int, K: int) -> int:
+        edges = defaultdict(dict)
+        graph = defaultdict(list)
+        for flight in flights:
+            edges[flight[0]][flight[1]] = flight[2]
+            graph[flight[0]].append(flight[1])
+        q = [(0, src, 0)]
+        heapq.heapify(q)
+
+        while q:
+            cost, city, step = heapq.heappop(q)
+            if city == dst:
+                return cost
+            if step > K:
+                continue
+            for next_stop in graph[city]:
+                heapq.heappush(
+                    q, (cost + edges[city][next_stop], next_stop, step + 1))
+        return -1
 ```
