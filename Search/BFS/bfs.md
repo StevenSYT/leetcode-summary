@@ -3,6 +3,7 @@
 - [Is Graph Bipartite?](#is-graph-bipartite?)
 - [Swim in Rising Water](#swim-in-rising-water)
 - [Cheapest Flights Within K Stops](#cheapest-flights-within-k-stops)
+- [Jump Game III](#jump-game-iii)
 
 ## Is Graph Bipartite?
 
@@ -136,4 +137,31 @@ class Solution:
                 heapq.heappush(
                     q, (cost + edges[city][next_stop], next_stop, step + 1))
         return -1
+```
+
+## Jump Game III
+
+[1306. Jump Game III](https://leetcode.com/problems/jump-game-iii/)
+
+```python
+from collections import deque
+
+
+class Solution:
+    def canReach(self, arr: List[int], start: int) -> bool:
+        if 0 not in arr:
+            return False
+        q = deque([start])
+        n = len(arr)
+        seen = set()
+        while q:
+            cur_idx = q.popleft()
+            if cur_idx in seen: continue
+            if arr[cur_idx] == 0:
+                return True
+            for next_idx in [cur_idx + arr[cur_idx], cur_idx - arr[cur_idx]]:
+                if 0 <= next_idx < n:
+                    q.append(next_idx)
+            seen.add(cur_idx)
+        return False
 ```
