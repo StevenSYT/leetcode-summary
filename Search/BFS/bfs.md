@@ -4,6 +4,8 @@
 - [Swim in Rising Water](#swim-in-rising-water)
 - [Cheapest Flights Within K Stops](#cheapest-flights-within-k-stops)
 - [Jump Game III](#jump-game-iii)
+- [Open the Lock](#open-the-lock)
+- [The Maze](#the-maze)
 
 ## Is Graph Bipartite?
 
@@ -163,5 +165,74 @@ class Solution:
                 if 0 <= next_idx < n:
                     q.append(next_idx)
             seen.add(cur_idx)
+        return False
+```
+
+## Open the Lock
+
+[752. Open the Lock](https://leetcode.com/problems/open-the-lock/)
+
+**Solution**
+
+BFS, each time for the digits, scroll up or down.
+
+```python
+class Solution:
+    def openLock(self, deadends: List[str], target: str) -> int:
+        deadends = set(deadends)
+        if '0000' in deadends:
+            return -1
+        q = deque([(0, '0000')])
+        visited = {'0000'} | deadends
+
+        while q:
+            turns, state = q.popleft()
+            if state == target:
+                return turns
+            for i in range(4):
+                for direction in [1, -1]:
+                    next_state = state[:i] + str(
+                        (int(state[i]) + direction) % 10) + state[i + 1:]
+                    if next_state not in visited:
+                        q.append((turns + 1, next_state))
+                        visited.add(next_state)
+        return -1
+```
+
+## The Maze
+
+[490. The Maze](https://leetcode.com/problems/the-maze/)
+
+**Solution**
+
+常规 BFS，注意这题每次滚动只有滚到墙了才能停下来，然后判断 wall 的时候注意考虑边界条件。
+
+```python
+from collections import deque
+class Solution:
+    def hasPath(self, maze: List[List[int]], start: List[int], destination: List[int]) -> bool:
+        m = len(maze)
+        n = len(maze[0])
+        q = deque([start])
+        visited = set(tuple(start))
+        directions = [(1, 0), (0, 1), (-1, 0), (0, -1)]
+
+        while q:
+            pos = q.popleft()
+            if pos == destination:
+                return True
+            for d in directions:
+                x, y = pos[0], pos[1]
+                nx, ny = x + d[0], y + d[1]
+
+                # Move until hit a wall.
+                # maintaining x, y ,nx, ny so that when while loop finished,
+                # x, y is at the right spot where it is next to the wall.
+                while 0 <= nx < m and 0 <= ny < n and maze[nx][ny] != 1:
+                    x, y = nx, ny
+                    nx, ny = nx + d[0], ny + d[1]
+                if (x, y) not in visited:
+                    q.append([x, y])
+                    visited.add((x, y))
         return False
 ```
