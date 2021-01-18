@@ -6,6 +6,7 @@
 - [Jump Game III](#jump-game-iii)
 - [Open the Lock](#open-the-lock)
 - [The Maze](#the-maze)
+- [The Maze II](#the-maze-ii)
 
 ## Is Graph Bipartite?
 
@@ -214,25 +215,71 @@ class Solution:
         m = len(maze)
         n = len(maze[0])
         q = deque([start])
-        visited = set(tuple(start))
+        visited = set()
         directions = [(1, 0), (0, 1), (-1, 0), (0, -1)]
 
         while q:
             pos = q.popleft()
+
             if pos == destination:
                 return True
-            for d in directions:
-                x, y = pos[0], pos[1]
-                nx, ny = x + d[0], y + d[1]
 
-                # Move until hit a wall.
-                # maintaining x, y ,nx, ny so that when while loop finished,
-                # x, y is at the right spot where it is next to the wall.
-                while 0 <= nx < m and 0 <= ny < n and maze[nx][ny] != 1:
-                    x, y = nx, ny
-                    nx, ny = nx + d[0], ny + d[1]
-                if (x, y) not in visited:
-                    q.append([x, y])
-                    visited.add((x, y))
+            if tuple(pos) in visited:
+                continue
+
+            visited.add(tuple(pos))
+
+            for i, j in directions:
+                nx, ny = pos[0], pos[1]
+
+                while 0 <= nx + i < m and 0 <= ny + j < n and maze[nx + i][ny + j] != 1:
+                    nx, ny = nx + i, ny + j
+                q.append([nx, ny])
         return False
+```
+
+## The Maze II
+
+[505. The Maze II](https://leetcode.com/problems/the-maze-ii/)
+
+**Solution**
+
+Use priority queue.
+
+```python
+import heapq
+class Solution:
+    def shortestDistance(self, maze: List[List[int]], start: List[int], destination: List[int]) -> int:
+        m = len(maze)
+        n = len(maze[0])
+        directions = [(1, 0), (0, 1), (-1, 0), (0, -1)]
+
+        q = [(0, start[0], start[1])]
+        heapq.heapify(q)
+
+        visited = set()
+
+
+        while q:
+            steps, x, y = heapq.heappop(q)
+
+            if [x, y] == destination:
+                return steps
+
+            if (x, y) in visited:
+                continue
+
+            visited.add((x, y))
+
+            for i, j in directions:
+                next_steps = steps
+                nx, ny = x, y
+
+                while 0 <= nx + i < m and 0 <= ny + j < n and maze[nx + i][ny + j] != 1:
+                    nx, ny = nx + i, ny + j
+                    next_steps += 1
+
+                heapq.heappush(q, (next_steps, nx, ny))
+
+        return -1
 ```
