@@ -1,18 +1,48 @@
 # Tree
 
 - [Traversal](#traversal)
-  - [Inorder Successor in BST](#inorder-successor-in-bst)
-  - [Binary Tree Inorder Traversal](#binary-tree-inorder-traversal)
+  - [Preoder](#preorder)
+    - [Binary Tree Preorder Traversal](#binary-tree-preoder-traversal)
+  - [Inorder](#inorder)
+    - [Inorder Successor in BST](#inorder-successor-in-bst)
+    - [Binary Tree Inorder Traversal](#binary-tree-inorder-traversal)
 
 ## Traversal
-
 Includes in-order, pre-order, post-order traversals.
+### Preorder
 
-### Inorder Successor in BST
+#### Binary Tree Preorder Traversal
+
+[144. Binary Tree Preorder Traversal](https://leetcode.com/problems/binary-tree-preorder-traversal/)
+
+**Solution**
+
+```python
+class Solution:
+    def preorderTraversal(self, root: TreeNode) -> List[int]:
+        if not root:
+            return []
+        res = []
+        stack = [root]
+
+        while stack:
+            node = stack.pop()
+            res.append(node.val)
+            if node.left:
+                stack.append(node.left)
+            if node.right:
+                stack.append(node.right)
+        return res
+
+```
+
+### Inorder
+
+#### Inorder Successor in BST
 
 [285. Inorder Successor in BST](https://leetcode.com/problems/inorder-successor-in-bst/)
 
-**_Solution 1_**
+**Solution 1**
 
 Recursive:
 
@@ -28,7 +58,7 @@ class Solution:
             return left if left else root
 ```
 
-**_Solution 2_**
+**Solution 2**
 
 Iterative:
 
@@ -48,7 +78,7 @@ class Solution:
 
 ```
 
-### Binary Tree Inorder Traversal
+#### Binary Tree Inorder Traversal
 
 [94. Binary Tree Inorder Traversal](https://leetcode.com/problems/binary-tree-inorder-traversal/)
 
