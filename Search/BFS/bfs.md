@@ -8,6 +8,7 @@
 - [The Maze](#the-maze)
 - [The Maze II](#the-maze-ii)
 - [Trapping Rain Water II](#trapping-rain-water-ii)
+- [Jump Game IV](#jump-game-iv)
 
 ## Is Graph Bipartite?
 
@@ -340,4 +341,49 @@ class Solution:
                         heapq.heappush(heap, (heightMap[nx][ny], nx, ny))
                     visited.add((nx, ny))
         return res
+```
+
+## Jump Game IV
+
+[1345. Jump Game IV](https://leetcode.com/problems/jump-game-iv/)
+
+**Solution**
+
+正常 BFS，这题有个 corner case，如果不处理会 TLE。就是如果同一个 val 每个 index 入 queue 以后记得避免`val_to_pos[val]`那个 list 被重复 iterate。
+
+```python
+from collections import deque, defaultdict
+
+
+class Solution:
+    def minJumps(self, arr: List[int]) -> int:
+        n = len(arr)
+        val_to_pos = defaultdict(list)
+        visited_pos = set()
+
+        for pos, val in enumerate(arr):
+            val_to_pos[val].append(pos)
+
+        q = deque([(0, 0)])
+
+        while q:
+            step, pos = q.popleft()
+
+            if pos == n - 1:
+                return step
+
+            if pos in visited_pos:
+                continue
+
+            visited_pos.add(pos)
+
+            next_nodes = [pos + 1, pos - 1]
+            while val_to_pos[arr[pos]]:
+                next_pos = val_to_pos[arr[pos]].pop()
+                if next_pos != pos:
+                    next_nodes.append(next_pos)
+
+            for p in next_nodes:
+                if 0 <= p < n:
+                    q.append((step + 1, p))
 ```
