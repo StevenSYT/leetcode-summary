@@ -9,6 +9,7 @@
 - [The Maze II](#the-maze-ii)
 - [Trapping Rain Water II](#trapping-rain-water-ii)
 - [Jump Game IV](#jump-game-iv)
+- [Minimum Number of Flips to Convert Binary Matrix to Zero Matrix](#minimum-number-of-flips-to-convert-binary-matrix-to-zero-matrix)
 
 ## Is Graph Bipartite?
 
@@ -386,4 +387,57 @@ class Solution:
             for p in next_nodes:
                 if 0 <= p < n:
                     q.append((step + 1, p))
+```
+
+## Minimum Number of Flips to Convert Binary Matrix to Zero Matrix
+
+[1284. Minimum Number of Flips to Convert Binary Matrix to Zero Matrix](https://leetcode.com/problems/minimum-number-of-flips-to-convert-binary-matrix-to-zero-matrix/)
+
+**Solution**
+
+这题较难，需要用到 bitmask 的思想，将矩阵 mat 压缩成一个 integer，然后每次对于每个位置做一个五点(cur, up, down, left, right)的 flip。其余思想就是一个 bfs。
+
+```python
+from collections import deque
+
+
+class Solution:
+    def minFlips(self, mat: List[List[int]]) -> int:
+        m, n = len(mat), len(mat[0])
+        directions = [(0, 0), (1, 0), (0, 1), (-1, 0), (0, -1)]
+
+        # Construct initial state "start"
+        start = 0
+        for i in range(m):
+            for j in range(n):
+                start |= mat[i][j] << (i * n + j)
+
+        q = deque([(0, start)])
+        visited = set()
+
+        while q:
+            step, status = q.popleft()
+
+            if not status:
+                return step
+
+            if status in visited:
+                continue
+
+            visited.add(status)
+
+            for i in range(m):
+                for j in range(n):
+                    next_status = status
+
+                    # Compute the next_status for a "flip"
+                    for d in directions:
+                        nx, ny = i + d[0], j + d[1]
+
+                        if 0 <= nx < m and 0 <= ny < n:
+                            next_status ^= 1 << (nx * n + ny)
+
+                    q.append((step + 1, next_status))
+
+        return -1
 ```
