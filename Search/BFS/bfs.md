@@ -11,6 +11,7 @@
 - [Jump Game IV](#jump-game-iv)
 - [Minimum Number of Flips to Convert Binary Matrix to Zero Matrix](#minimum-number-of-flips-to-convert-binary-matrix-to-zero-matrix)
 - [Cut Off Trees for Golf Event](#cut-off-trees-for-golf-event)
+- [Snakes and Ladders](#snakes-and-ladders)
 
 ## Is Graph Bipartite?
 
@@ -509,6 +510,55 @@ class Solution:
                 if 0 <= nx < m and 0 <= ny < n and forest[nx][ny] >= 1 and (
                         nx, ny) not in visited:
                     q.append((step + 1, (nx, ny)))
+
+        return -1
+```
+
+## Snakes and Ladders
+
+[909. Snakes and Ladders](https://leetcode.com/problems/snakes-and-ladders/)
+
+**Solution**
+
+比较需要注意的地方是根据x推r, c. 以及从board上取值下来要注意-1，因为x是从0开始算的。
+
+```python
+from collections import deque
+
+class Solution:
+    def snakesAndLadders(self, board: List[List[int]]) -> int:
+        n = len(board)
+
+        visited = set()
+        # dq: each element is a pair of (steps, x) where x means the x-th
+        # square.
+        dq = deque([(0, 0)])
+
+        while dq:
+            steps, x = dq.popleft()
+
+            if x == n ** 2 - 1:
+                return steps
+
+            if x in visited:
+                continue
+
+            visited.add(x)
+
+
+            for i in range(1, 7):
+                if x + i < n ** 2:
+                    nx = x + i
+
+                    # Be careful about the r, c computing
+                    r = n - nx // n - 1
+                    c = nx % n if (nx // n % 2 == 0) else n - nx % n - 1
+
+                    if board[r][c] != -1:
+                        # nx starts from 0, so we need to offset -1 for it.
+                        nx = board[r][c] - 1
+
+                    dq.append((steps + 1, nx))
 
         return -1
 ```
