@@ -12,6 +12,7 @@
 - [Minimum Number of Flips to Convert Binary Matrix to Zero Matrix](#minimum-number-of-flips-to-convert-binary-matrix-to-zero-matrix)
 - [Cut Off Trees for Golf Event](#cut-off-trees-for-golf-event)
 - [Snakes and Ladders](#snakes-and-ladders)
+- [Shortest Path Visiting All Nodes](#shortest-path-visiting-all-nodes)
 
 ## Is Graph Bipartite?
 
@@ -520,7 +521,7 @@ class Solution:
 
 **Solution**
 
-比较需要注意的地方是根据x推r, c. 以及从board上取值下来要注意-1，因为x是从0开始算的。
+比较需要注意的地方是根据 x 推 r, c. 以及从 board 上取值下来要注意-1，因为 x 是从 0 开始算的。
 
 ```python
 from collections import deque
@@ -561,4 +562,43 @@ class Solution:
                     dq.append((steps + 1, nx))
 
         return -1
+```
+
+## Shortest Path Visiting All Nodes
+
+[847. Shortest Path Visiting All Nodes](https://leetcode.com/problems/shortest-path-visiting-all-nodes/)
+
+**Solution**
+
+Bitmask + BFS, 这题能这么做的原因是 nodes 总大小很小(<32)。
+
+```python3
+from collections import deque
+
+class Solution:
+    def shortestPathLength(self, graph: List[List[int]]) -> int:
+        n = len(graph)
+
+        q = deque([((1 << i), i) for i in range(n)])
+        visited = set()
+
+        steps = 0
+        while q:
+            size = len(q)
+            for _ in range(size):
+                status, node = q.popleft()
+
+                if status == 2 ** n - 1:
+                    return steps
+
+                if (status, node) in visited:
+                    continue
+
+                visited.add((status, node))
+
+                for next_node in graph[node]:
+                    next_status = status
+                    next_status |= (1 << next_node)
+                    q.append((next_status, next_node))
+            steps += 1
 ```
