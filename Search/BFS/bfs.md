@@ -13,6 +13,7 @@
 - [Cut Off Trees for Golf Event](#cut-off-trees-for-golf-event)
 - [Snakes and Ladders](#snakes-and-ladders)
 - [Shortest Path Visiting All Nodes](#shortest-path-visiting-all-nodes)
+- [Pacific Atlantic Water Flow](#pacific-atlantic-water-flow)
 
 ## Is Graph Bipartite?
 
@@ -601,4 +602,63 @@ class Solution:
                     next_status |= (1 << next_node)
                     q.append((next_status, next_node))
             steps += 1
+```
+
+## Pacific Atlantic Water Flow
+
+[417. Pacific Atlantic Water Flow](https://leetcode.com/problems/pacific-atlantic-water-flow/)
+
+**Solution**
+
+这题可以用 DFS 和 BFS 都行，思路是，用两个`0/1`矩阵分别表示`matrix`里每个点能否到`Pacific`或者`Atlantic`，最终的结果就是直接取两个矩阵共同为`1`的点。
+
+然后 DFS 和 BFS 要从每一个边界上的点都做一遍。
+
+```python
+from collections import deque
+
+
+class Solution:
+    def pacificAtlantic(self, matrix: List[List[int]]) -> List[List[int]]:
+        if len(matrix) == 0 or len(matrix[0]) == 0:
+            return []
+
+        m, n = len(matrix), len(matrix[0])
+
+        pacific = [[0] * n for _ in range(m)]
+        atlantic = [[0] * n for _ in range(m)]
+
+        for i in range(m):
+            self.bfs(i, 0, pacific, matrix)
+            self.bfs(i, n - 1, atlantic, matrix)
+
+        for j in range(n):
+            self.bfs(0, j, pacific, matrix)
+            self.bfs(m - 1, j, atlantic, matrix)
+
+        res = []
+        for i in range(m):
+            for j in range(n):
+                if atlantic[i][j] == pacific[i][j] == 1:
+                    res.append([i, j])
+        return res
+
+    def bfs(self, x, y, ocean, matrix):
+        m, n = len(matrix), len(matrix[0])
+        q = deque([(x, y)])
+
+        while q:
+            r, c = q.popleft()
+
+            if ocean[r][c] == 1:
+                continue
+
+            ocean[r][c] = 1
+
+            for i, j in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
+                nr, nc = r + i, c + j
+                # 从边界往内搜索，所以这里matrix[nr][nc] >= matrix[r][c]恰好跟条件相反
+                if 0 <= nr < m and 0 <= nc < n:
+                    if matrix[nr][nc] >= matrix[r][c]:
+                        q.append((nr, nc))
 ```
