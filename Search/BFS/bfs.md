@@ -14,6 +14,7 @@
 - [Snakes and Ladders](#snakes-and-ladders)
 - [Shortest Path Visiting All Nodes](#shortest-path-visiting-all-nodes)
 - [Pacific Atlantic Water Flow](#pacific-atlantic-water-flow)
+- [Word Ladder](#word-ladder)
 
 ## Is Graph Bipartite?
 
@@ -661,4 +662,41 @@ class Solution:
                 if 0 <= nr < m and 0 <= nc < n:
                     if matrix[nr][nc] >= matrix[r][c]:
                         q.append((nr, nc))
+```
+
+## Word Ladder
+
+[127. Word Ladder](https://leetcode.com/problems/word-ladder/)
+
+**Solution**
+
+在找下一个word的时候，对每一个位置试试26个字母，看有没有能跳的word，这个是这题比较巧妙的地方，别的都很常规。
+
+```python
+from collections import deque
+from string import ascii_lowercase
+
+
+class Solution:
+    def ladderLength(self, beginWord: str, endWord: str,
+                     wordList: List[str]) -> int:
+        unvisited_words = set(wordList)
+        q = deque([(beginWord, 1)])
+
+        if endWord not in unvisited_words:
+            return 0
+
+        while q:
+            word, step = q.popleft()
+            if word == endWord:
+                return step
+
+            for i in range(len(word)):
+                for ch in ascii_lowercase:
+                    next_word = word[:i] + ch + word[i + 1:]
+
+                    if next_word in unvisited_words:
+                        q.append((next_word, step + 1))
+                        unvisited_words.remove(next_word)
+        return 0
 ```
