@@ -15,6 +15,7 @@
 - [Shortest Path Visiting All Nodes](#shortest-path-visiting-all-nodes)
 - [Pacific Atlantic Water Flow](#pacific-atlantic-water-flow)
 - [Word Ladder](#word-ladder)
+- [Word Ladder II](#word-ladder-ii)
 
 ## Is Graph Bipartite?
 
@@ -699,4 +700,48 @@ class Solution:
                         q.append((next_word, step + 1))
                         unvisited_words.remove(next_word)
         return 0
+```
+
+## Word Ladder II
+
+[Word Ladder II](https://leetcode.com/problems/word-ladder-ii/)
+
+**Solution**
+
+BFS的解法需要一层一层的遍历，用一个unvisited_words的集合来记录当前未被访问的words，每层结束以后更新unvisited_words。
+
+```python
+from collections import deque
+from string import ascii_lowercase
+
+
+class Solution:
+    def findLadders(self, beginWord: str, endWord: str,
+                    wordList: List[str]) -> List[List[str]]:
+        unvisited_words = set(wordList)
+        q = deque([[beginWord]])
+
+        if endWord not in beginWord:
+            return []
+
+        res = []
+        while q:
+            visited = set()
+            size = len(q)
+            for _ in range(size):
+                path = q.popleft()
+                word = path[-1]
+
+                if path[-1] == endWord:
+                    res.append(path)
+                    continue
+
+                for i in range(len(beginWord)):
+                    for ch in ascii_lowercase:
+                        next_word = word[:i] + ch + word[i + 1:]
+                        if next_word in unvisited_words:
+                            q.append(path + [next_word])
+                            visited.add(next_word)
+            unvisited_words -= visited
+        return res
 ```

@@ -8,8 +8,10 @@
 from collections import deque
 from string import ascii_lowercase
 
+
 class Solution:
-    def findLadders(self, beginWord: str, endWord: str, wordList: List[str]) -> List[List[str]]:
+    def findLadders(self, beginWord: str, endWord: str,
+                    wordList: List[str]) -> List[List[str]]:
         unvisited_words = set(wordList)
         q = deque([[beginWord]])
 
@@ -38,7 +40,4 @@ class Solution:
         return res
 
 
-
-
 # @lc code=end
-
