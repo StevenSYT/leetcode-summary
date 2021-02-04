@@ -3,6 +3,7 @@
 [Backtracking](#backtracking) 
 - [Subsets](#subsets)
 - [Subsets II](#subsets-ii)
+- [Permutations](#permutations)
 
 ## Backtracking
 
@@ -85,4 +86,35 @@ class Solution:
             self.dfs(subset, i + 1, nums, res)
             # backtrack
             subset.pop()
+```
+
+
+### Permutations
+
+[46. Permutations](https://leetcode.com/problems/permutations/)
+
+**Solution**
+
+很常规的backtrack，注意有两个data structure需要backtrack
+
+```python
+class Solution:
+    def permute(self, nums: List[int]) -> List[List[int]]:
+        num_sets = set(nums)
+        res = []
+        self.dfs([], num_sets, res)
+        return res
+    
+    def dfs(self, path, nums, res):
+        if not nums:
+            res.append(path.copy())
+            return
+        
+        for num in list(nums):
+            path.append(num)
+            nums.remove(num)
+            self.dfs(path, nums, res)
+            # Backtrack
+            nums.add(num)
+            path.pop()
 ```
