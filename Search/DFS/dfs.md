@@ -1,9 +1,11 @@
 # DFS
 
-[Backtracking](#backtracking) 
+[Backtracking](#backtracking)
+
 - [Subsets](#subsets)
 - [Subsets II](#subsets-ii)
 - [Permutations](#permutations)
+- [Permutations II](#permutations-ii)
 
 ## Backtracking
 
@@ -74,20 +76,19 @@ class Solution:
         res = []
         self.dfs([], 0, sorted_nums, res)
         return res
-    
+
     def dfs(self, subset, pos, nums, res):
         res.append(subset.copy())
 
         for i in range(pos, len(nums)):
             if i > pos and nums[i] == nums[i - 1]:
                 continue
-            
+
             subset.append(nums[i])
             self.dfs(subset, i + 1, nums, res)
             # backtrack
             subset.pop()
 ```
-
 
 ### Permutations
 
@@ -95,7 +96,7 @@ class Solution:
 
 **Solution**
 
-很常规的backtrack，注意有两个data structure需要backtrack
+很常规的 backtrack，注意有两个 data structure 需要 backtrack
 
 ```python
 class Solution:
@@ -104,12 +105,12 @@ class Solution:
         res = []
         self.dfs([], num_sets, res)
         return res
-    
+
     def dfs(self, path, nums, res):
         if not nums:
             res.append(path.copy())
             return
-        
+
         for num in list(nums):
             path.append(num)
             nums.remove(num)
@@ -117,4 +118,29 @@ class Solution:
             # Backtrack
             nums.add(num)
             path.pop()
+```
+
+### Permutations II
+
+[Permutations II](https://leetcode.com/problems/permutations-ii/)
+
+**Solution**
+
+```python
+class Solution:
+    def permuteUnique(self, nums: List[int]) -> List[List[int]]:
+        sorted_nums = sorted(nums)
+        res = []
+        self.dfs([], sorted_nums, res)
+        return res
+
+    def dfs(self, path, nums, res):
+        if not nums:
+            res.append(path)
+
+        for i in range(len(nums)):
+            if i > 0 and nums[i] == nums[i - 1]:
+                continue
+
+            self.dfs(path + [nums[i]], nums[:i] + nums[i + 1:], res)
 ```
