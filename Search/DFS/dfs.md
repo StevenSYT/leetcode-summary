@@ -6,6 +6,7 @@
 - [Subsets II](#subsets-ii)
 - [Permutations](#permutations)
 - [Permutations II](#permutations-ii)
+- [Combination Sum II](#combination-sum-ii)
 
 ## Backtracking
 
@@ -143,4 +144,38 @@ class Solution:
                 continue
 
             self.dfs(path + [nums[i]], nums[:i] + nums[i + 1:], res)
+```
+
+### Combination Sum II
+
+[40. Combination Sum II](https://leetcode.com/problems/combination-sum-ii/)
+
+**Solution**
+
+需要注意的一个trick就是，在for loop里判断一下当前选的number是不是比target大，如果是提前结束，这样可以达到剪枝的目的。
+
+```python
+class Solution:
+    def combinationSum2(self, candidates: List[int], target: int) -> List[List[int]]:
+        sorted_nums = sorted(candidates)
+        res = []
+        self.dfs([], sorted_nums, target, res)
+        return res
+
+    def dfs(self, path, nums, target, res):
+        if target < 0:
+            return
+        
+        if target == 0:
+            res.append(path)
+            return
+        
+        for i in range(len(nums)):
+            if nums[i] > target:
+                break
+
+            if i > 0 and nums[i] == nums[i - 1]:
+                continue
+
+            self.dfs(path + [nums[i]], nums[i + 1:], target - nums[i], res)
 ```
