@@ -8,6 +8,7 @@
 - [Permutations II](#permutations-ii)
 - [Combination Sum](#combination-sum)
 - [Combination Sum II](#combination-sum-ii)
+- [Combination Sum III](#combination-sum-iii)
 - [Sudoku Solver](#sudoku-solver)
 - [Beautiful Arrangement](#beautiful-arrangement)
 - [Word Break II](#word-break-ii)
@@ -215,6 +216,34 @@ class Solution:
                 continue
 
             self.dfs(path + [nums[i]], nums[i + 1:], target - nums[i], res)
+```
+
+### Combination Sum III
+
+[216. Combination Sum III](https://leetcode.com/problems/combination-sum-iii/)
+
+**Solution**
+
+```python
+class Solution:
+    def combinationSum3(self, k: int, n: int) -> List[List[int]]:
+        nums = range(1, 10)
+        res = []
+        self.dfs([], nums, k, n, res)
+        return res
+
+    def dfs(self, path, nums, k, target, res):
+        if k == 0:
+            if target == 0:
+                res.append(path)
+            return
+
+        for i in range(len(nums)):
+            if nums[i] > target:
+                break
+
+            self.dfs(path + [nums[i]], nums[i + 1:], k - 1, target - nums[i],
+                     res)
 ```
 
 ### Sudoku Solver
