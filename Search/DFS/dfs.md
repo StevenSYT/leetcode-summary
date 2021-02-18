@@ -9,6 +9,7 @@
 - [Combination Sum](#combination-sum)
 - [Combination Sum II](#combination-sum-ii)
 - [Combination Sum III](#combination-sum-iii)
+- [Letter Case Permutation](#letter-case-permutation)
 - [Sudoku Solver](#sudoku-solver)
 - [Beautiful Arrangement](#beautiful-arrangement)
 - [Word Break II](#word-break-ii)
@@ -246,6 +247,33 @@ class Solution:
                      res)
 ```
 
+### Letter Case Permutation
+
+[784. Letter Case Permutation](https://leetcode.com/problems/letter-case-permutation/)
+
+**Solution**
+
+```python
+class Solution:
+    def letterCasePermutation(self, S: str) -> List[str]:
+        res = []
+        self.dfs('', 0, S, res)
+        return res
+
+    def dfs(self, path, pos, string, res):
+        if pos == len(string):
+            res.append(path)
+            return
+
+        if string[pos].isnumeric():
+            self.dfs(path + string[pos], pos + 1, string, res)
+
+        else:
+            self.dfs(path + string[pos].upper(), pos + 1, string, res)
+            self.dfs(path + string[pos].lower(), pos + 1, string, res)
+```
+
+
 ### Sudoku Solver
 
 [37. Sudoku Solver](https://leetcode.com/problems/sudoku-solver/)
@@ -369,3 +397,4 @@ class Solution:
     def beginWith(self, s, pos, target):
         return s[pos:pos + len(target)] == target
 ```
+
