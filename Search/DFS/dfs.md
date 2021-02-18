@@ -8,6 +8,8 @@
 - [Permutations II](#permutations-ii)
 - [Combination Sum](#combination-sum)
 - [Combination Sum II](#combination-sum-ii)
+- [Sudoku Solver](#sudoku-solver)
+- [Beautiful Arrangement](#beautiful-arrangement)
 
 ## Backtracking
 
@@ -212,4 +214,97 @@ class Solution:
                 continue
 
             self.dfs(path + [nums[i]], nums[i + 1:], target - nums[i], res)
+```
+
+### Sudoku Solver
+
+[37. Sudoku Solver](https://leetcode.com/problems/sudoku-solver/)
+
+**Solution**
+
+```python
+from collections import defaultdict
+
+
+class Solution:
+    def solveSudoku(self, board: List[List[str]]) -> None:
+        """
+        Do not return anything, modify board in-place instead.
+        """
+        row_sets, col_sets, cell_sets = defaultdict(set), defaultdict(
+            set), defaultdict(set)
+
+        def get_cell_num(row, col):
+            return (row // 3) * 3 + col // 3
+
+        to_fill = []
+
+        for r in range(9):
+            for c in range(9):
+                if board[r][c] != ".":
+                    row_sets[r].add(board[r][c])
+                    col_sets[c].add(board[r][c])
+                    cell_sets[get_cell_num(r, c)].add(board[r][c])
+                else:
+                    to_fill.append((r, c))
+
+        def dfs(idx, board):
+            if idx == len(to_fill):
+                return True
+
+            row, col = to_fill[idx]
+            cell_num = get_cell_num(row, col)
+            for ch in "123456789":
+                if ch in row_sets[row] or ch in col_sets[
+                        col] or ch in cell_sets[cell_num]:
+                    continue
+
+                board[row][col] = ch
+                row_sets[row].add(ch)
+                col_sets[col].add(ch)
+                cell_sets[cell_num].add(ch)
+
+                if dfs(idx + 1, board):
+                    return True
+
+                board[row][col] = '.'
+                row_sets[row].remove(ch)
+                col_sets[col].remove(ch)
+                cell_sets[cell_num].remove(ch)
+
+        dfs(0, board)
+        return board
+```
+
+### Beautiful Arrangement
+
+[526. Beautiful Arrangement](https://leetcode.com/problems/beautiful-arrangement/)
+
+**Solution**
+
+```python
+
+class Solution:
+    def countArrangement(self, n: int) -> int:
+        nums = list(range(1, n + 1))
+
+        return self.dfs([], nums)
+
+    def is_divisible(self, a, b):
+        return a // b >= 1 and a % b == 0
+
+    def dfs(self, path, nums):
+        if not nums:
+            return 1
+
+        res = 0
+        i = len(path) + 1
+
+        for idx in range(len(nums)):
+            if self.is_divisible(nums[idx], i) or self.is_divisible(
+                    i, nums[idx]):
+                res += self.dfs(path + [nums[idx]],
+                                nums[:idx] + nums[idx + 1:])
+
+        return res
 ```
