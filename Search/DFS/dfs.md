@@ -13,6 +13,7 @@
 - [Sudoku Solver](#sudoku-solver)
 - [Beautiful Arrangement](#beautiful-arrangement)
 - [Word Break II](#word-break-ii)
+- [Generate Parenthese](#generate-parenthese)
 
 ## Backtracking
 
@@ -273,7 +274,6 @@ class Solution:
             self.dfs(path + string[pos].lower(), pos + 1, string, res)
 ```
 
-
 ### Sudoku Solver
 
 [37. Sudoku Solver](https://leetcode.com/problems/sudoku-solver/)
@@ -398,3 +398,28 @@ class Solution:
         return s[pos:pos + len(target)] == target
 ```
 
+### Generate Parenthese
+
+[22. Generate Parenthese](https://leetcode.com/problems/generate-parentheses/)
+
+**Solution**
+
+```python
+class Solution:
+    def generateParenthesis(self, n: int) -> List[str]:
+
+        res = []
+        self.dfs("", n, [], res)
+        return res
+
+    def dfs(self, path, k, stack, res):
+        if k == 0 and not stack:
+            res.append(path)
+            return
+
+        if stack:
+            self.dfs(path + stack[-1], k, stack[:-1], res)
+
+        if k > 0:
+            self.dfs(path + "(", k - 1, stack + [")"], res)
+```
