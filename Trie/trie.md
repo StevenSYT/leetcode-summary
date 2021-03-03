@@ -3,6 +3,7 @@
 - [Implement Trie (Prefix Tree)](<#implement-trie-(prefix-tree)>)
 - [Design Add and Search Words Data Structure](#design-add-and-search-words-data-structure)
 - [Prefix and Suffix Search](#prefix-and-suffix-search)
+- [Maximum XOR of Two Numbers in an Array](#maximum-xor-of-two-numbers-in-an-array)
 
 ## Implement Trie (Prefix Tree)
 
@@ -198,4 +199,86 @@ class WordFilter:
 
         res = pre_indices & suf_indices
         return max(list(res)) if res else -1
+```
+
+## Maximum XOR of Two Numbers in an Array
+
+[421. Maximum XOR of Two Numbers in an Array](https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array/)
+
+**Solution 1**
+
+Very simple code yet, not that easy to understand.
+
+```python
+class Solution:
+    def findMaximumXOR(self, nums: List[int]) -> int:
+        ans, mask = 0, 0
+        for i in range(31, -1, -1):
+            # Mask will be like "100000" -> "110000" ->... -> "111111"
+            # over the iterations
+            mask |= 1 << i
+
+            # The filtered nums
+            found = set([num & mask for num in nums])
+
+            # The max xor so far is ans with the ith being "1".
+            possible_ans = ans | 1 << i
+
+            # If we can find a pair whose XOR satisfies the target
+            # "possible_res", we update ans with possible_ans.
+            # If not we iterate to next bit and do the same examination.
+            if any(possible_ans ^ pref in found for pref in found):
+                ans = possible_ans
+
+        return ans
+```
+
+**Solution 2: Trie**
+
+Two for loops:
+
+1. Insert all num into the Trie, note that use 32 bits to represent the nums. This means the leaf nodes of the Trie all have the same depths 32.
+
+2. For each num, query the trie and find the largest XOR with that num as one operand. Each query will be a depth-32 traversal, each step we try to see if we can have branches that make the current bit "1" -> this way we can guarantee the result of each query returns a max XOR with target num as one operand.
+
+Get the Max XOR from the XORs obtained from step 2.
+
+```python
+class Trie:
+    def __init__(self):
+        self.root = {}
+
+    def insert(self, num):
+        node = self.root
+        for i in range(31, -1, -1):
+            bit = (num >> i) & 1
+            if bit not in node:
+                node[bit] = {}
+            node = node[bit]
+
+    def query(self, num):
+        node = self.root
+        result = 0
+        for i in range(31, -1, -1):
+            bit = (num >> i) & 1
+            if 1 - bit in node:
+                result = (result << 1) + 1
+                node = node[1 - bit]
+            else:
+                result = (result << 1) + 0
+                node = node[bit]
+        return result
+
+
+class Solution:
+    def findMaximumXOR(self, nums: List[int]) -> int:
+        trie = Trie()
+        for num in nums:
+            trie.insert(num)
+
+        res = 0
+        for num in nums:
+            res = max(res, trie.query(num))
+
+        return res
 ```
