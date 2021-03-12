@@ -2,6 +2,7 @@
 
 - [Meeting Rooms](#meeting-rooms)
 - [Meeting Rooms II](#meeting-rooms-ii)
+- [My Calendar III](#my-calendar-iii)
 
 ## Meeting Rooms
 
@@ -45,6 +46,29 @@ class Solution:
 
         cnt, res = 0, 0
         for point in sorted(points):
+            cnt += point[1]
+            res = max(cnt, res)
+
+        return res
+```
+
+## My Calendar III
+
+[732. My Calendar III](https://leetcode.com/problems/my-calendar-iii/)
+
+```python
+class MyCalendarThree:
+    def __init__(self):
+        self.points = []
+
+    def book(self, start: int, end: int) -> int:
+        self.points.append((start, 1))
+        self.points.append((end, -1))
+        self.points.sort()
+
+        cnt = 0
+        res = 0
+        for point in self.points:
             cnt += point[1]
             res = max(cnt, res)
 
