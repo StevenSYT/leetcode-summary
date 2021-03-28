@@ -1,6 +1,7 @@
 # Sliding Window
 
 - [Grumpy Bookstore Owner](#grumpy-bookstore-owner)
+- [Shortest Subarray to be Removed to Make Array Sorted](#shortest-subarray-to-be-removed-to-make-array-sorted)
 
 ## Grumpy Bookstore Owner
 
@@ -27,3 +28,38 @@ class Solution:
         
         return max_satisfied
 ```
+
+## Shortest Subarray to be Removed to Make Array Sorted
+
+[1574. Shortest Subarray to be Removed to Make Array Sorted](https://leetcode.com/problems/shortest-subarray-to-be-removed-to-make-array-sorted/)
+
+```python
+class Solution:
+    def findLengthOfShortestSubarray(self, arr: List[int]) -> int:
+        n = len(arr)
+
+        l, r = 0, n - 1
+
+        while l < r and arr[l] <= arr[l + 1]:
+            l += 1
+
+        if l == n - 1:
+            return 0
+
+        while r > l and arr[r - 1] <= arr[r]:
+            r -= 1
+
+        res = min(n - l - 1, r)  # either remove [l, n - 1] or [0, r - 1]
+
+        for left in range(l + 1):
+            if arr[left] <= arr[r]:
+                res = min(res, r - left - 1)
+
+            elif r < n - 1:
+                r += 1
+
+            else:
+                break
+        return res
+```
+
