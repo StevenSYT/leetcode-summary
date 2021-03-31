@@ -5,6 +5,7 @@
 - [Reverse Vowels of a String](#reverse-vowels-of-a-string)
 - [Valid Palindrome II](#valid-palindrome-ii)
 - [Merge Sorted Array](#merge-sorted-array)
+- [Number of Subsequences That Satisfy the Given Sum Condition](#number-of-subsequences-that-satisfy-the-given-sum-condition)
 
 ## Two Sum II - Input array is sorted
 
@@ -94,6 +95,7 @@ class Solution:
 ```
 
 ## Merge Sorted Array
+
 [88. Merge Sorted Array](https://leetcode.com/problems/merge-sorted-array/description/)
 
 **Solution:**
@@ -122,4 +124,34 @@ class Solution:
                 nums1[p] = nums1[p1]
                 p1 -= 1
             p -= 1
+```
+
+## Number of Subsequences That Satisfy the Given Sum Condition
+
+[1498. Number of Subsequences That Satisfy the Given Sum Condition](https://leetcode.com/problems/number-of-subsequences-that-satisfy-the-given-sum-condition/)
+
+```python
+class Solution:
+    def numSubseq(self, nums: List[int], target: int) -> int:
+        A = sorted(nums)
+
+        l, r = 0, len(A) - 1
+        mod = 10**9 + 7
+        res = 0
+
+        while l <= r:
+            if A[l] + A[r] > target:
+                r -= 1
+
+            else:
+                # There are 2 ^ (r - l) subsequences for subarray A[l] ~ A[r]
+                # with A[l] always in the subsequences. Basically
+                # for A[l + 1] ~ A[r] the items can either be picked or not,
+                # hence the computation. And each of these subsequence is
+                # guarenteed to be a legit one, because:
+                # (A[l] + max of the subsequence) < A[l] + A[r] <= target
+                res += 2**(r - l) % mod
+                l += 1
+
+        return res % mod
 ```
