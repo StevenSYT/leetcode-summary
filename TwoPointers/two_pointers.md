@@ -7,6 +7,7 @@
 - [Merge Sorted Array](#merge-sorted-array)
 - [Number of Subsequences That Satisfy the Given Sum Condition](#number-of-subsequences-that-satisfy-the-given-sum-condition)
 - [Get the Maximum Score](#get-the-maximum-score)
+- [Maximum Score of a Good Subarray](#maximum-score-of-a-good-subarray)
 
 ## Two Sum II - Input array is sorted
 
@@ -193,4 +194,34 @@ class Solution:
                     p2 += 1
 
         return max(s1, s2) % mod
+```
+
+## Maximum Score of a Good Subarray
+
+[1793. Maximum Score of a Good Subarray](https://leetcode.com/problems/maximum-score-of-a-good-subarray/)
+
+```python
+class Solution:
+    def maximumScore(self, nums: List[int], k: int) -> int:
+        i = j = k
+        n = len(nums)
+        cur_min = nums[i]
+
+        res = nums[i] * (j - i + 1)
+        while 0 < i or j < n - 1:
+            if i == 0:
+                j += 1
+
+            elif j == n - 1:
+                i -= 1
+
+            elif nums[i - 1] <= nums[j + 1]:
+                j += 1
+
+            else:
+                i -= 1
+            cur_min = min(cur_min, nums[i], nums[j])
+            res = max(res, cur_min * (j - i + 1))
+
+        return res
 ```
