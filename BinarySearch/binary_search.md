@@ -3,6 +3,7 @@
 - [Split Array Largest Sum](#split-array-largest-sum)
 - [Koko Eating Bananas](#koko-eating-bananas)
 - [Minimum Number of Days to Make m Bouquets](#minimum-number-of-days-to-make-m-bouquets)
+- [Find the Smallest Divisor Given a Threshold](#find-the-smallest-divisor-given-a-threshold)
 
 ## Split Array Largest Sum
 
@@ -112,4 +113,29 @@ class Solution:
                 cum_sum = 0
 
         return num_b >= m
+```
+
+## Find the Smallest Divisor Given a Threshold
+
+[1283. Find the Smallest Divisor Given a Threshold](https://leetcode.com/problems/find-the-smallest-divisor-given-a-threshold/)
+
+```python
+class Solution:
+    def smallestDivisor(self, nums: List[int], threshold: int) -> int:
+        low, high = 1, max(nums)
+
+        res = 0
+        while low <= high:
+            mid = (low + high) // 2
+            if self.is_valid(nums, threshold, mid):
+                res = mid
+                high = mid - 1
+
+            else:
+                low = mid + 1
+
+        return res
+
+    def is_valid(self, nums, threshold, div):
+        return sum(math.ceil(num / div) for num in nums) <= threshold
 ```
