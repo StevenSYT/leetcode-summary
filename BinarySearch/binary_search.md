@@ -5,6 +5,8 @@
 - [Minimum Number of Days to Make m Bouquets](#minimum-number-of-days-to-make-m-bouquets)
 - [Find the Smallest Divisor Given a Threshold](#find-the-smallest-divisor-given-a-threshold)
 - [Capacity To Ship Packages Within D Days](#capacity-to-ship-packages-within-d-days)
+- [Divide Chocolate](#divide-chocolate)
+
 
 ## Split Array Largest Sum
 
@@ -174,4 +176,47 @@ class Solution:
             cum_sum += weight
 
         return days <= D
+```
+
+## Divide Chocolate
+
+[1231. Divide Chocolate](https://leetcode.com/problems/divide-chocolate/)
+
+```python
+class Solution:
+    def maximizeSweetness(self, sweetness: List[int], K: int) -> int:
+        if K == 0:
+            return sum(sweetness)
+
+        low, high = min(sweetness), sum(sweetness) // (K + 1)
+
+        res = 0
+        while low <= high:
+            mid = (low + high) // 2
+
+            num_cut = 0
+            cur_sweet = 0
+
+            for i, sweet in enumerate(sweetness):
+                cur_sweet += sweet
+
+                if cur_sweet >= mid:
+                    cur_sweet = 0
+                    num_cut += 1
+
+                if num_cut == K:
+                    cur_sweet = sum(sweetness[i + 1:])
+                    break
+
+            if num_cut != K:
+                high = mid - 1
+
+            elif cur_sweet < mid:
+                high = mid - 1
+
+            else:
+                res = mid
+                low = mid + 1
+
+        return res
 ```
