@@ -6,7 +6,7 @@
 - [Find the Smallest Divisor Given a Threshold](#find-the-smallest-divisor-given-a-threshold)
 - [Capacity To Ship Packages Within D Days](#capacity-to-ship-packages-within-d-days)
 - [Divide Chocolate](#divide-chocolate)
-
+- [Minimize Max Distance to Gas Station](#minimize-max-distance-to-gas-station)
 
 ## Split Array Largest Sum
 
@@ -219,4 +219,37 @@ class Solution:
                 low = mid + 1
 
         return res
+```
+
+## Minimize Max Distance to Gas Station
+
+[774. Minimize Max Distance to Gas Station](https://leetcode.com/problems/minimize-max-distance-to-gas-station/)
+
+```python
+class Solution:
+    def minmaxGasDist(self, stations: List[int], k: int) -> float:
+        dis = [0]
+
+        for i in range(1, len(stations)):
+            dis.append(stations[i] - stations[i - 1])
+
+        low, high = 0, max(dis)
+        res = 0
+        while low + 1e-6 < high:
+            mid = (low + high) / 2
+            if self.is_valid(dis, k, mid):
+                res = mid
+                high = mid
+
+            else:
+                low = mid
+
+        return res
+
+    def is_valid(self, dis, k, penalty):
+        count = 0
+        for i in range(1, len(dis)):
+            count += math.ceil(dis[i] / penalty) - 1
+
+        return count <= k
 ```
