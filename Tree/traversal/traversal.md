@@ -9,6 +9,7 @@
   - [Recover Binary Search Tree](#recover-binary-search-tree)
 
 - [Construct Binary Tree from Preorder and Inorder Traversal](#construct-binary-tree-from-preorder-and-inorder-traversal)
+- [Construct Binary Tree from Inorder and Postorder Traversal](#construct-binary-tree-from-inorder-and-postorder-traversal)
 
 Includes in-order, pre-order, post-order traversals.
 
@@ -185,6 +186,33 @@ class Solution:
             idx = inorder_dict[cur_node.val]
             cur_node.left = helper(start, idx - 1)
             cur_node.right = helper(idx + 1, end)
+
+            return cur_node
+
+        return helper(0, len(inorder) - 1)
+```
+
+### Construct Binary Tree from Inorder and Postorder Traversal
+
+[106. Construct Binary Tree from Inorder and Postorder Traversal](https://leetcode.com/problems/construct-binary-tree-from-inorder-and-postorder-traversal/)
+
+**Solution**
+
+这题跟105基本上代码都一样，唯一的区别是postorder遍历的顺序是pop最后一个，这样出来的顺序是root, right, left。所以helper function里要先遍历右边。 
+
+```python
+class Solution:
+    def buildTree(self, inorder: List[int], postorder: List[int]) -> TreeNode:
+        inorder_dict = {val: idx for idx, val in enumerate(inorder)}
+
+        def helper(start, end):
+            if start > end:
+                return None
+
+            cur_node = TreeNode(postorder.pop())
+            idx = inorder_dict[cur_node.val]
+            cur_node.right = helper(idx + 1, end)
+            cur_node.left = helper(start, idx - 1)
 
             return cur_node
 
