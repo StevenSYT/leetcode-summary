@@ -2,15 +2,15 @@
 
 - [Preoder](#preorder)
   - [Binary Tree Preorder Traversal](#binary-tree-preoder-traversal)
+  - [Flip Binary Tree To Match Preorder Traversal](#flip-binary-tree-to-match-preorder-traversal)
+  - [Verify Preorder Serialization of a Binary Tree](#verify-preoder-serialization-of-a-binary-tree)
 - [Inorder](#inorder)
-
   - [Inorder Successor in BST](#inorder-successor-in-bst)
   - [Binary Tree Inorder Traversal](#binary-tree-inorder-traversal)
   - [Recover Binary Search Tree](#recover-binary-search-tree)
 
 - [Construct Binary Tree from Preorder and Inorder Traversal](#construct-binary-tree-from-preorder-and-inorder-traversal)
 - [Construct Binary Tree from Inorder and Postorder Traversal](#construct-binary-tree-from-inorder-and-postorder-traversal)
-- [Verify Preorder Serialization of a Binary Tree](#verify-preoder-serialization-of-a-binary-tree)
 
 ## Preorder
 
@@ -37,6 +37,72 @@ class Solution:
                 stack.append(node.right)
         return res
 
+```
+
+### Flip Binary Tree To Match Preorder Traversal
+
+[971. Flip Binary Tree To Match Preorder Traversal](https://leetcode.com/problems/flip-binary-tree-to-match-preorder-traversal/)
+
+**Solution**
+
+这题就是考察dfs，后续补上stack/iterative的写法
+
+```python
+class Solution:
+    def flipMatchVoyage(self, root: TreeNode, voyage: List[int]) -> List[int]:
+        self.i = 0
+        self.res = []
+        return self.res if self.dfs(root, voyage) else [-1]
+        
+        
+    def dfs(self, root, voyage):
+        if not root:
+            return True
+        
+        if root.val != voyage[self.i]:
+            return False
+
+        self.i += 1
+
+        if root.left and root.left.val != voyage[self.i]:
+            self.res.append(root.val)
+            return self.dfs(root.right, voyage) and self.dfs(root.left, voyage)
+
+        else:
+            return self.dfs(root.left, voyage) and self.dfs(root.right, voyage)
+```
+
+### Verify Preorder Serialization of a Binary Tree
+
+[331. Verify Preorder Serialization of a Binary Tree](https://leetcode.com/problems/verify-preorder-serialization-of-a-binary-tree/)
+
+**Solution**
+
+We just need to remember how many empty slots we have during the process.
+
+Initially we have one ( for the root ).
+
+for each node we check if we still have empty slots to put it in.
+
+- a null node occupies one slot.
+- a non-null node occupies one slot before he creates two more. the net gain is one.
+
+```python
+class Solution:
+    def isValidSerialization(self, preorder: str) -> bool:
+        slots = 1
+
+        for node in preorder.split(","):
+            if slots == 0:
+                return False
+
+            if node == "#":
+                slots -= 1
+
+            else:
+                slots += 1
+
+        return slots == 0
 ```
 
 ## Inorder
@@ -218,35 +284,3 @@ class Solution:
         return helper(0, len(inorder) - 1)
 ```
 
-### Verify Preorder Serialization of a Binary Tree
-
-[331. Verify Preorder Serialization of a Binary Tree](https://leetcode.com/problems/verify-preorder-serialization-of-a-binary-tree/)
-
-**Solution**
-
-We just need to remember how many empty slots we have during the process.
-
-Initially we have one ( for the root ).
-
-for each node we check if we still have empty slots to put it in.
-
-- a null node occupies one slot.
-- a non-null node occupies one slot before he creates two more. the net gain is one.
-
-```python
-class Solution:
-    def isValidSerialization(self, preorder: str) -> bool:
-        slots = 1
-
-        for node in preorder.split(","):
-            if slots == 0:
-                return False
-
-            if node == "#":
-                slots -= 1
-
-            else:
-                slots += 1
-
-        return slots == 0
-```
