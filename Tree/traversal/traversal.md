@@ -4,6 +4,8 @@
   - [Binary Tree Preorder Traversal](#binary-tree-preoder-traversal)
   - [Flip Binary Tree To Match Preorder Traversal](#flip-binary-tree-to-match-preorder-traversal)
   - [Verify Preorder Serialization of a Binary Tree](#verify-preoder-serialization-of-a-binary-tree)
+  - [Recover a Tree From Preorder Traversal](#recover-a-tree-from-preorder-traversal)
+  
 - [Inorder](#inorder)
   - [Inorder Successor in BST](#inorder-successor-in-bst)
   - [Binary Tree Inorder Traversal](#binary-tree-inorder-traversal)
@@ -103,6 +105,45 @@ class Solution:
                 slots += 1
 
         return slots == 0
+```
+
+### Recover a Tree From Preorder Traversal
+
+[1028. Recover a Tree From Preorder Traversal](https://leetcode.com/problems/recover-a-tree-from-preorder-traversal/)
+
+**Solution** 
+
+Stack的解法，每个循环里，用几个小的while loop拿到一个node的值和其当前的level，将level和stack的大小比较，如果stack大小比当前node level大，就pop stack。
+
+然后按顺序把node作为stack[-1]的左右子树。然后把node入栈。最后stack[0]一定是root。
+
+```python
+class Solution:
+    def recoverFromPreorder(self, S: str) -> TreeNode:
+        stack = []
+        i = 0
+
+        while i < len(S):
+            level, val = 0, ""
+            while i < len(S) and S[i] == "-":
+                i, level = i + 1, level + 1
+
+            while i < len(S) and S[i] != "-":
+                i, val = i + 1, val + S[i]
+
+            while len(stack) > level:
+                stack.pop()
+
+            node = TreeNode(val)
+            if stack and stack[-1].left is None:
+                stack[-1].left = node
+
+            elif stack:
+                stack[-1].right = node
+
+            stack.append(node)
+
+        return stack[0]
 ```
 
 ## Inorder
