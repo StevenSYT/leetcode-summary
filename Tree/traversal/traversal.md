@@ -13,7 +13,7 @@
 
 - [Construct Binary Tree from Preorder and Inorder Traversal](#construct-binary-tree-from-preorder-and-inorder-traversal)
 - [Construct Binary Tree from Inorder and Postorder Traversal](#construct-binary-tree-from-inorder-and-postorder-traversal)
-
+- [Number of Ways to Reorder Array to Get Same BST](#number-of-ways-to-reorder-array-to-get-same-bst)
 ## Preorder
 
 ### Binary Tree Preorder Traversal
@@ -323,5 +323,30 @@ class Solution:
             return cur_node
 
         return helper(0, len(inorder) - 1)
+```
+
+### Number of Ways to Reorder Array to Get Same BST
+
+[1569. Number of Ways to Reorder Array to Get Same BST](https://leetcode.com/problems/number-of-ways-to-reorder-array-to-get-same-bst/)
+
+这道题看这个[讲解](https://www.youtube.com/watch?v=FxGWaG9danM)
+
+```python
+from math import comb
+
+
+class Solution:
+    def numOfWays(self, nums: List[int]) -> int:
+        mod = 10**9 + 7
+
+        def dfs(nums):
+            if len(nums) <= 2: return 1
+
+            left = [v for v in nums if v < nums[0]]
+            right = [v for v in nums if v > nums[0]]
+            return comb(len(left) + len(right),
+                        len(right)) * dfs(left) * dfs(right) % mod
+
+        return dfs(nums) - 1
 ```
 
