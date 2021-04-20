@@ -5,6 +5,7 @@ Learning purpose only. Record leetcode problems and OAs.
 - [Amazon Online Assessment](./amazon_oa.md)
 - [BFS](Search/BFS/bfs.md)
 - [Binary Search](BinarySearch/binary_search.md)
+- [Design](Design/design.md)
 - [DFS](Search/DFS/dfs.md)
 - [DP](DP/dp.md)
 - [Hashmap](Hashmap/hashmap.md)
