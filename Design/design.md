@@ -3,6 +3,8 @@
 - [Insert Delete GetRandom O(1)](#insert-delete-getrandom-o1)
 - [Insert Delete GetRandom O(1) - Duplicates allowed](#insert-delete-getrandom-o1---duplicates-allowed)
 - [All O`one Data Structure](#all-oone-data-structure)
+- [Snapshot Array](#snapshot-array)
+
 ## Insert Delete GetRandom O(1)
 
 [380. Insert Delete GetRandom O(1)](https://leetcode.com/problems/insert-delete-getrandom-o1/)
@@ -122,9 +124,9 @@ class RandomizedCollection:
 
 **Solution**
 
-这题比较难，需要用到DoubleLinkedList和两个hashmap，一个hashmap负责统计key count，一个hashmap负责count和Node的对应关系。
+这题比较难，需要用到 DoubleLinkedList 和两个 hashmap，一个 hashmap 负责统计 key count，一个 hashmap 负责 count 和 Node 的对应关系。
 
-双链表的一个Node存所有count为x的key，然后maintain一个顺序就是链表最末端存最大，最始端存最小。快速查找到一个node就用那个负责count和Node对应关系的hashmap。
+双链表的一个 Node 存所有 count 为 x 的 key，然后 maintain 一个顺序就是链表最末端存最大，最始端存最小。快速查找到一个 node 就用那个负责 count 和 Node 对应关系的 hashmap。
 
 ```python
 from collections import defaultdict
@@ -261,4 +263,32 @@ class AllOne:
         """
         return "" if self.dll.is_empty() else self.dll.get_first().get_any_key(
         )
+```
+
+## Snapshot Array
+
+[1146. Snapshot Array](https://leetcode.com/problems/snapshot-array/)
+
+**Solution**
+
+用一个 map[index, snap_id] = val 来存，get 的时候对 snap_id 做递减的操作，每个循环检查[index, snap_id]是不是在 map 里。map 只有在 set 的时候会被 update，所以有时候 snap 了，某些 index 上对应的值一直没变化的话只会存一个老的 snap_id + index 的 combo
+
+```python
+class SnapshotArray:
+    def __init__(self, length: int):
+        self.map = {}
+        self.snap_id = 0
+
+    def set(self, index: int, val: int) -> None:
+        self.map[self.snap_id, index] = val
+
+    def snap(self) -> int:
+        self.snap_id += 1
+        return self.snap_id - 1
+
+    def get(self, index: int, snap_id: int) -> int:
+        for id in range(snap_id, -1, -1):
+            if (id, index) in self.map:
+                return self.map[id, index]
+        return 0
 ```
