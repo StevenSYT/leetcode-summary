@@ -4,6 +4,7 @@
 - [Insert Delete GetRandom O(1) - Duplicates allowed](#insert-delete-getrandom-o1---duplicates-allowed)
 - [All O`one Data Structure](#all-oone-data-structure)
 - [Snapshot Array](#snapshot-array)
+- [Design a Stack With Increment Operation](#design-a-stack-with-increment-operation)
 
 ## Insert Delete GetRandom O(1)
 
@@ -291,4 +292,32 @@ class SnapshotArray:
             if (id, index) in self.map:
                 return self.map[id, index]
         return 0
+```
+
+## Design a Stack With Increment Operation
+
+[1381. Design a Stack With Increment Operation](https://leetcode.com/problems/design-a-stack-with-increment-operation/)
+
+```python
+class CustomStack:
+    def __init__(self, maxSize: int):
+        self.stack = []
+        self.capacity = maxSize
+
+    def push(self, x: int) -> None:
+        if len(self.stack) < self.capacity:
+            self.stack.append(x)
+
+    def pop(self) -> int:
+        if self.stack:
+            return self.stack.pop()
+        return -1
+
+    def increment(self, k: int, val: int) -> None:
+        for i in range(k):
+            if i == len(self.stack):
+                break
+
+            self.stack[i] += val
+
 ```
