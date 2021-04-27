@@ -5,6 +5,7 @@
 - [All O`one Data Structure](#all-oone-data-structure)
 - [Snapshot Array](#snapshot-array)
 - [Design a Stack With Increment Operation](#design-a-stack-with-increment-operation)
+- [LRU Cache](#lru-cache)
 
 ## Insert Delete GetRandom O(1)
 
@@ -320,4 +321,65 @@ class CustomStack:
 
             self.stack[i] += val
 
+```
+
+## LRU Cache
+
+[146. LRU Cache](https://leetcode.com/problems/lru-cache/)
+
+**Solution**
+
+经典题，双链表 + map
+
+```python
+class Node:
+    def __init__(self, val=None, key=None):
+        self.val = val
+        self.key = key
+        self.prev = None
+        self.next = None
+
+
+class LRUCache:
+    def __init__(self, capacity: int):
+        self.head = Node()
+        self.tail = Node()
+        self.map = {}
+        self.capacity = capacity
+        self.head.next, self.tail.prev = self.tail, self.head
+
+    def get(self, key: int) -> int:
+
+        if key in self.map:
+            self._move_to_end(self.map[key])
+            return self.map[key].val
+
+        return -1
+
+    def put(self, key: int, value: int) -> None:
+        if key in self.map:
+            node = self.map[key]
+            node.val = value
+            self._move_to_end(node)
+
+        else:
+            new_node = Node(value, key)
+            self.map[key] = new_node
+            self._add_to_end(new_node)
+            if len(self.map) > self.capacity:
+                del self.map[self.head.next.key]
+                self._remove(self.head.next)
+
+    def _remove(self, node):
+        node.prev.next, node.next.prev = node.next, node.prev
+
+    def _add_to_end(self, node):
+        node.prev = self.tail.prev
+        self.tail.prev.next = node
+        node.next = self.tail
+        self.tail.prev = node
+
+    def _move_to_end(self, node):
+        self._remove(node)
+        self._add_to_end(node) 
 ```
