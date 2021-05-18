@@ -2,6 +2,7 @@
 
 - [Range Sum Query - Mutable](#range-sum-query---mutable)
 - [Range Sum Query 2D - Mutable](#range-sum-query-2d---mutable)
+- [Count of Smaller Numbers After Self](#count-of-smaller-numbers-after-self)
 
 ## Range Sum Query - Mutable
 
@@ -71,7 +72,7 @@ class NumArray:
 
 **Solution**
 
-花花的视频，讲fenwick tree讲的非常清楚。https://www.youtube.com/watch?v=WbafSgetDDk 
+花花的视频，讲 fenwick tree 讲的非常清楚。https://www.youtube.com/watch?v=WbafSgetDDk
 
 ```python
 class FenwickTree:
@@ -121,4 +122,44 @@ class NumMatrix:
         sum += self.fw_tree.query(row2 + 1, col2 + 1) + self.fw_tree.query(row1, col1)
         sum -= self.fw_tree.query(row2 + 1, col1) - self.fw_tree.query(row1, col2 + 1)
         return sum
+```
+
+## Count of Smaller Numbers After Self
+
+[315. Count of Smaller Numbers After Self](https://leetcode.com/problems/count-of-smaller-numbers-after-self/)
+
+```python
+class FenwickTree:
+    def __init__(self, n):
+        self.tree = [0] * (n + 1)
+
+    def low_bit(self, i):
+        return i & (-i)
+
+    def update(self, i, delta):
+        while i < len(self.tree):
+            self.tree[i] += delta
+            i += self.low_bit(i)
+
+    def query(self, i):
+        res = 0
+        while i > 0:
+            res += self.tree[i]
+            i -= self.low_bit(i)
+        return res
+
+
+class Solution:
+    def countSmaller(self, nums: List[int]) -> List[int]:
+        num_set = set(nums)
+        ranks = {num: rank + 1 for rank, num in enumerate(sorted(num_set))}
+        n = len(ranks)
+        res = [0] * len(nums)
+        self.fw_tree = FenwickTree(n)
+
+        for i, num in enumerate(reversed(nums)):
+            res[i] = self.fw_tree.query(ranks[num] - 1)
+            self.fw_tree.update(ranks[num], 1)
+
+        return reversed(res)
 ```

@@ -14,6 +14,7 @@
 - [Construct Binary Tree from Preorder and Inorder Traversal](#construct-binary-tree-from-preorder-and-inorder-traversal)
 - [Construct Binary Tree from Inorder and Postorder Traversal](#construct-binary-tree-from-inorder-and-postorder-traversal)
 - [Number of Ways to Reorder Array to Get Same BST](#number-of-ways-to-reorder-array-to-get-same-bst)
+- [Flatten Binary Tree to Linked List](#flatten-binary-tree-to-linked-list)
 ## Preorder
 
 ### Binary Tree Preorder Traversal
@@ -350,3 +351,46 @@ class Solution:
         return dfs(nums) - 1
 ```
 
+### Flatten Binary Tree to Linked List
+
+[114. Flatten Binary Tree to Linked List](https://leetcode.com/problems/flatten-binary-tree-to-linked-list/)
+
+**Solution**
+
+from the original tree:
+```
+    1
+   / \
+  2   5
+ / \   \
+3   4   6
+```
+We need to traverse `(6 -> 5 -> 4 -> 3 -> 2 -> 1)`, to achieve that, we need to do the traversal in the order of (right, left, root), we need to make sure each time the traversed node set its right pointer to the previously traversed node. Hence we use a global variable prev to store the previously
+Traversed node.
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+
+
+class Solution:
+    def __init__(self):
+        self.prev = None
+
+    def flatten(self, root: TreeNode) -> None:
+        """
+        Do not return anything, modify root in-place instead.
+        """
+        if root == None:
+            return None
+
+        self.flatten(root.right)
+        self.flatten(root.left)
+        root.right = self.prev
+        root.left = None
+        self.prev = root
+```
